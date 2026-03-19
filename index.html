@@ -1,1231 +1,359 @@
 <!DOCTYPE html>
+<!--
+  O que é DOCTYPE?
+  Diz ao navegador que este é um documento HTML5 (versão atual do HTML).
+  Sem isso, o navegador entra em "quirks mode" e pode renderizar errado.
+-->
+
+<!-- lang="pt-BR" informa ao navegador e leitores de tela que o
+     conteúdo está em português do Brasil. -->
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Linkhub · CESAR School</title>
-<link rel="icon" type="image/png" href="school_laranja.png" />
-<link rel="shortcut icon" type="image/png" href="school_laranja.png" />
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#e35a00" />
+  <!--
+    O <head> contém informações SOBRE a página (metadados).
+    Nenhum elemento do <head> aparece visualmente na página.
+  -->
+
+  <!-- Define o conjunto de caracteres. UTF-8 suporta acentos,
+       emojis e caracteres especiais de todas as línguas. -->
+  <meta charset="UTF-8" />
+
+  <!-- Configura o viewport para dispositivos móveis.
+       width=device-width: largura igual à tela do dispositivo.
+       initial-scale=1.0: sem zoom inicial.
+       Sem isso, o site apareceria minúsculo em celulares. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Título que aparece na aba do navegador e nos resultados de busca -->
+  <title>Linkhub · CESAR School</title>
+
+  <!-- Favicon: ícone que aparece na aba do navegador.
+       Usamos um PNG comum — navegadores modernos aceitam. -->
+  <link rel="icon" type="image/png" href="assets/images/school_laranja.png" />
+  <link rel="shortcut icon" type="image/png" href="assets/images/school_laranja.png" />
+
+  <!-- Manifesto do PWA: permite que o site seja "instalado" como app.
+       O arquivo manifest.json contém o nome, ícone e configurações do app. -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Cor da barra de status no Android ao abrir como PWA -->
+  <meta name="theme-color" content="#e35a00" />
+
+  <!-- Pré-conexão com o Google Fonts para carregar fontes mais rápido.
+       preconnect estabelece a conexão antes de precisar dos arquivos. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Carrega as fontes do Google Fonts:
+       - Bricolage Grotesque: usada nos títulos
+       - Plus Jakarta Sans: usada no texto geral
+       display=swap faz o texto aparecer com fonte padrão enquanto
+       a fonte personalizada carrega (evita texto invisível). -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Arquivo de estilos CSS — contém todo o visual do site.
+       rel="stylesheet" identifica o tipo do arquivo.
+       href="style.css" é o caminho para o arquivo. -->
+  <link rel="stylesheet" href="style.css" />
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-<style>
-  /* ── Reset & Vars ─────────────────────────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:        #ffffff;
-    --bg-dark:   #fff5f0;
-    --bg-deeper: #ffe8dc;
-    --card:      rgba(227,90,0,0.06);
-    --card-b:    rgba(227,90,0,0.2);
-    --btn:       #f26b1d;
-    --btn-h:     #e35a00;
-    --text:      #1a1a1a;
-    --text-dim:  rgba(0,0,0,0.45);
-    --accent:    #e35a00;
-    --radius:    14px;
-    --radius-lg: 22px;
-    --font-head: 'Bricolage Grotesque', sans-serif;
-    --font-body: 'Plus Jakarta Sans', sans-serif;
-    --shadow:    0 8px 32px rgba(227,90,0,0.12);
-  }
-
-  [data-theme="dark"] {
-    --bg:        #1a0e00;
-    --bg-dark:   #120a00;
-    --bg-deeper: #0d0600;
-    --card:      rgba(255,255,255,0.06);
-    --card-b:    rgba(255,255,255,0.11);
-    --text:      #fff0e6;
-    --text-dim:  rgba(255,240,230,0.5);
-    --accent:    #e35a00;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    transition: background .4s ease, color .4s ease;
-  }
-
-  /* ── Loading Screen ───────────────────────────────────── */
-  #loading {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 20px;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-  }
-  #loading.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-  .spinner {
-    width: 48px; height: 48px;
-    border: 4px solid rgba(255,255,255,0.25);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-text {
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    letter-spacing: .08em;
-    opacity: .8;
-  }
-
-  /* ── Background Texture ───────────────────────────────── */
-  #app {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  #app.visible { opacity: 1; }
-
-  .bg-rings {
-    position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
-  }
-  .bg-rings span {
-    position: absolute;
-    border-radius: 50%;
-    border: 1.5px solid rgba(227,90,0,0.18);
-  }
-  [data-theme="dark"] .bg-rings span {
-    border-color: rgba(255,255,255,0.05);
-  }
-  .bg-rings span:nth-child(1) { width: 600px; height: 600px; top: -200px; right: -200px; }
-  .bg-rings span:nth-child(2) { width: 900px; height: 900px; top: -300px; right: -380px; }
-  .bg-rings span:nth-child(3) { width: 400px; height: 400px; bottom: -100px; left: -150px; }
-
-  /* ── Layout ───────────────────────────────────────────── */
-  .container {
-    position: relative; z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
-
-  /* ── Header ───────────────────────────────────────────── */
-  header {
-    display: flex; flex-direction: column;
-    align-items: center; text-align: center;
-    gap: 1rem;
-    padding: 2rem 0 2.5rem;
-    animation: fadeUp .6s ease both;
-  }
-
-  .logo-wrap {
-    width: 280px; height: 120px;
-    background: rgba(227,90,0,0.06);
-    border: 1.5px solid rgba(227,90,0,0.2);
-    border-radius: 18px;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    padding: 16px 28px;
-    transition: background .4s, border-color .4s;
-  }
-  [data-theme="dark"] .logo-wrap {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
-  }
-
-  .logo-wrap img {
-    width: 100%; height: 100%;
-    object-fit: contain;
-  }
-
-  .header-info h1 {
-    font-family: var(--font-head);
-    font-size: clamp(1.5rem, 4.5vw, 2rem);
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -.01em;
-    color: #e35a00;
-  }
-  [data-theme="dark"] .header-info h1 { color: var(--text); }
-  .header-info h1 span { opacity: .6; font-weight: 700; }
-
-  .header-info p {
-    margin-top: .4rem;
-    font-size: .9rem;
-    color: var(--text-dim);
-  }
-
-  /* ── Share Bar ────────────────────────────────────────── */
-  .share-bar {
-    display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap;
-    margin-bottom: 2rem;
-    animation: fadeUp .6s .1s ease both;
-  }
-
-  .share-btn {
-    display: inline-flex; align-items: center; gap: .45rem;
-    background: #e35a00;
-    border: 1px solid #e35a00;
-    color: #ffffff;
-    font-family: var(--font-body);
-    font-size: .8rem;
-    font-weight: 600;
-    padding: .5rem .95rem;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: background .2s, transform .15s, border-color .2s;
-    backdrop-filter: blur(6px);
-    text-decoration: none;
-  }
-  .share-btn:hover { background: #c24e00; border-color: #c24e00; transform: translateY(-2px); }
-  .share-btn:active { transform: translateY(0); }
-  .share-btn svg { flex-shrink: 0; }
-
-  [data-theme="dark"] .share-btn {
-    background: rgba(255,255,255,0.10);
-    border-color: rgba(255,255,255,0.18);
-    color: var(--text);
-  }
-  [data-theme="dark"] .share-btn:hover {
-    background: rgba(255,255,255,0.18);
-    border-color: rgba(255,255,255,0.35);
-  }
-
-  /* ── QR Modal ─────────────────────────────────────────── */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 500;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; visibility: hidden;
-    transition: opacity .3s, visibility .3s;
-  }
-  .modal-overlay.open { opacity: 1; visibility: visible; }
-
-  .modal {
-    background: #fff;
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    width: 280px;
-    text-align: center;
-    transform: scale(.9);
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-    color: #1a1a1a;
-  }
-  .modal-overlay.open .modal { transform: scale(1); }
-
-  .modal h3 {
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    color: #e35a00;
-  }
-
-  #qr-img {
-    width: 200px; height: 200px;
-    border-radius: 10px;
-    border: 2px solid #eee;
-    display: block; margin: 0 auto 1rem;
-  }
-
-  .qr-url {
-    font-size: .72rem;
-    color: #666;
-    word-break: break-all;
-    margin-bottom: 1rem;
-  }
-
-  .modal-actions { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
-
-  .modal-btn {
-    font-family: var(--font-body);
-    font-size: .8rem;
-    font-weight: 600;
-    padding: .5rem 1rem;
-    border-radius: 100px;
-    border: none;
-    cursor: pointer;
-    transition: opacity .2s, transform .15s;
-  }
-  .modal-btn:hover { opacity: .85; transform: translateY(-1px); }
-  .modal-btn.primary { background: var(--bg); color: #fff; }
-  .modal-btn.secondary { background: #eee; color: #333; }
-
-  /* ── Section ──────────────────────────────────────────── */
-  section { margin-bottom: 2rem; animation: fadeUp .5s ease both; }
-  section:nth-child(1) { animation-delay: .15s; }
-  section:nth-child(2) { animation-delay: .22s; }
-  section:nth-child(3) { animation-delay: .29s; }
-  section:nth-child(4) { animation-delay: .36s; }
-
-  .section-label {
-    font-family: var(--font-head);
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -.02em;
-    color: var(--text);
-    margin-bottom: 1rem;
-    padding-left: 2px;
-    padding-bottom: .35rem;
-    border-bottom: 3px solid #e35a00;
-    display: inline-block;
-  }
-  [data-theme="dark"] .section-label { border-bottom-color: rgba(255,255,255,0.15); }
-
-  /* ── Link Cards ───────────────────────────────────────── */
-  .links-grid { display: flex; flex-direction: column; gap: .55rem; }
-
-  .link-card {
-    display: flex; align-items: center; gap: 1rem;
-    background: var(--card);
-    border: 1px solid var(--card-b);
-    border-radius: var(--radius);
-    padding: 1rem 1.1rem;
-    color: var(--text);
-    text-decoration: none;
-    transition: background .2s, transform .2s, border-color .2s;
-    backdrop-filter: blur(8px);
-  }
-  .link-card:hover { background: rgba(227,90,0,0.1); border-color: rgba(227,90,0,0.35); transform: translateX(4px); }
-  [data-theme="dark"] .link-card:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); }
-
-  .link-icon {
-    font-size: 1.3rem;
-    width: 2.4rem; height: 2.4rem;
-    background: rgba(227,90,0,0.12);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  [data-theme="dark"] .link-icon { background: rgba(255,255,255,0.1); }
-  .link-icon-text {
-    font-family: var(--font-head);
-    font-size: .72rem;
-    font-weight: 800;
-    letter-spacing: .02em;
-  }
-
-  .link-label { font-weight: 600; font-size: .95rem; flex: 1; }
-
-  .link-arrow {
-    opacity: .5;
-    transition: opacity .2s, transform .2s;
-  }
-  .link-card:hover .link-arrow { opacity: 1; transform: translateX(3px); }
-
-  .link-badge {
-    font-size: .62rem;
-    font-weight: 700;
-    letter-spacing: .06em;
-    padding: .18rem .45rem;
-    border-radius: 5px;
-    background: rgba(227,90,0,0.1);
-    border: 1px solid rgba(227,90,0,0.25);
-    color: #e35a00;
-    flex-shrink: 0;
-  }
-  [data-theme="dark"] .link-badge {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.25);
-    color: inherit;
-  }
-
-  /* ── Schedule ─────────────────────────────────────────── */
-  .schedule-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: .65rem;
-  }
-
-  .day-card {
-    background: var(--card);
-    border: 1px solid var(--card-b);
-    border-radius: var(--radius);
-    padding: .9rem .85rem;
-    backdrop-filter: blur(8px);
-  }
-  .day-card.today { border-color: #e35a00; background: rgba(227,90,0,0.07); }
-  .day-card.friday { border-style: dashed; border-color: rgba(227,90,0,0.3); }
-  [data-theme="dark"] .day-card.today { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); }
-  [data-theme="dark"] .day-card.friday { border-color: rgba(255,255,255,0.2); }
-
-  .day-name {
-    font-family: var(--font-head);
-    font-size: .82rem;
-    letter-spacing: .03em;
-    margin-bottom: .7rem;
-    display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
-  }
-  .today-badge {
-    font-size: .58rem;
-    background: rgba(227,90,0,0.15);
-    color: #e35a00;
-    padding: .15rem .45rem;
-    border-radius: 100px;
-    letter-spacing: .05em;
-  }
-  .friday-badge {
-    font-size: .58rem;
-    background: rgba(227,90,0,0.1);
-    color: #e35a00;
-    padding: .15rem .45rem;
-    border-radius: 100px;
-    font-family: var(--font-body);
-    font-weight: 600;
-  }
-  [data-theme="dark"] .today-badge {
-    background: rgba(255,255,255,0.2);
-    color: inherit;
-  }
-  [data-theme="dark"] .friday-badge {
-    background: rgba(255,255,255,0.1);
-    color: inherit;
-  }
-
-  .aula-item { margin-bottom: .55rem; }
-  .aula-item:last-child { margin-bottom: 0; }
-
-  .aula-horario { font-size: .65rem; color: var(--text-dim); margin-bottom: .1rem; }
-  .aula-disc { font-size: .78rem; font-weight: 600; line-height: 1.3; }
-  .aula-sala { font-size: .65rem; color: var(--text-dim); }
-
-  .aula-aviso {
-    display: inline-block;
-    margin-top: .35rem;
-    font-size: .62rem;
-    font-weight: 700;
-    letter-spacing: .04em;
-    background: rgba(227,90,0,0.1);
-    border: 1px solid rgba(227,90,0,0.3);
-    color: #e35a00;
-    padding: .15rem .45rem;
-    border-radius: 5px;
-  }
-  [data-theme="dark"] .aula-aviso {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.3);
-    color: inherit;
-  }
-
-  /* ── Provas ───────────────────────────────────────────── */
-  .provas-list { display: flex; flex-direction: column; gap: 2rem; }
-
-  .materia-group { display: flex; flex-direction: column; gap: .45rem; }
-
-  .materia-header {
-    font-family: var(--font-head);
-    font-size: .95rem;
-    font-weight: 700;
-    letter-spacing: .01em;
-    color: var(--text-dim);
-    padding: .5rem 0 .4rem 2px;
-    border-bottom: 1px solid var(--card-b);
-    margin-bottom: .2rem;
-    display: flex; align-items: center; justify-content: space-between; gap: .5rem;
-  }
-
-  .prova-card {
-    display: grid;
-    grid-template-columns: 3.5rem 1fr auto;
-    align-items: center;
-    gap: .8rem;
-    background: var(--card);
-    border: 1px solid var(--card-b);
-    border-radius: var(--radius);
-    padding: .85rem 1rem;
-    backdrop-filter: blur(8px);
-  }
-  .prova-card.upcoming { border-left: 3px solid #e35a00; }
-  [data-theme="dark"] .prova-card.upcoming { border-left-color: rgba(255,255,255,0.5); }
-
-  .prova-date {
-    text-align: center;
-    background: rgba(227,90,0,0.1);
-    border-radius: 8px;
-    padding: .35rem .2rem;
-  }
-  [data-theme="dark"] .prova-date { background: rgba(255,255,255,0.1); }
-  .prova-date .day { font-family: var(--font-head); font-size: 1.25rem; font-weight: 800; line-height: 1; }
-  .prova-date .month { font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; }
-
-  .prova-info .disc { font-weight: 600; font-size: .88rem; }
-  .prova-info .detail { font-size: .72rem; color: var(--text-dim); margin-top: .1rem; }
-
-  .prova-tipo {
-    font-family: var(--font-head);
-    font-size: .7rem;
-    background: rgba(227,90,0,0.1);
-    color: #e35a00;
-    padding: .25rem .55rem;
-    border-radius: 100px;
-    letter-spacing: .04em;
-    white-space: nowrap;
-  }
-  [data-theme="dark"] .prova-tipo { background: rgba(255,255,255,0.12); color: inherit; }
-
-  /* ── Monitorias ───────────────────────────────────────── */
-  .monitorias-list { display: flex; flex-direction: column; gap: 2rem; }
-
-  .monitoria-card {
-    display: flex; align-items: center; gap: 1rem;
-    background: var(--card);
-    border: 1px solid var(--card-b);
-    border-radius: var(--radius);
-    padding: .9rem 1rem;
-    backdrop-filter: blur(8px);
-  }
-
-  .monitoria-dot {
-    width: 10px; height: 10px;
-    background: #e35a00;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  [data-theme="dark"] .monitoria-dot { background: rgba(255,255,255,0.5); }
-
-  .monitoria-info { flex: 1; }
-  .monitoria-disc { font-weight: 600; font-size: .88rem; }
-  .monitoria-detail { font-size: .72rem; color: var(--text-dim); margin-top: .1rem; }
-
-  .monitoria-link {
-    font-size: .75rem;
-    color: var(--text);
-    background: rgba(227,90,0,0.1);
-    border: 1px solid rgba(227,90,0,0.2);
-    padding: .3rem .65rem;
-    border-radius: 100px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background .2s;
-    white-space: nowrap;
-  }
-  .monitoria-link:hover { background: rgba(227,90,0,0.18); }
-  [data-theme="dark"] .monitoria-link { background: rgba(255,255,255,0.1); border-color: transparent; }
-  [data-theme="dark"] .monitoria-link:hover { background: rgba(255,255,255,0.18); }
-
-  /* ── Footer ───────────────────────────────────────────── */
-  footer {
-    text-align: center;
-    font-size: .72rem;
-    color: var(--text-dim);
-    padding-top: 1rem;
-    animation: fadeUp .5s .5s ease both;
-  }
-
-  /* ── Toast ────────────────────────────────────────────── */
-  #toast {
-    position: fixed; bottom: 1.5rem; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: rgba(20,20,20,0.9);
-    color: #fff;
-    font-size: .82rem;
-    font-weight: 500;
-    padding: .6rem 1.2rem;
-    border-radius: 100px;
-    opacity: 0;
-    transition: opacity .3s, transform .3s;
-    pointer-events: none;
-    z-index: 999;
-    white-space: nowrap;
-  }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* ── Animations ───────────────────────────────────────── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Responsive ────────────────────────────────────────── */
-
-  /* Desktop largo: links, provas e monitorias em grid */
-  @media (min-width: 900px) {
-    .links-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
-    .provas-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-    .monitorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-  }
-
-  /* Tablet landscape: grade 3 + 2 */
-  @media (max-width: 899px) and (min-width: 620px) {
-    .schedule-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  /* Tablet portrait: grade 2 colunas */
-  @media (max-width: 619px) and (min-width: 420px) {
-    .schedule-grid { grid-template-columns: repeat(2, 1fr); }
-    .prova-card { grid-template-columns: 3rem 1fr auto; }
-  }
-
-  /* Mobile: grade coluna única, esconde label dos botões de share */
-  @media (max-width: 419px) {
-    .schedule-grid { grid-template-columns: 1fr; }
-    .prova-card { grid-template-columns: 3rem 1fr auto; }
-    .share-btn span { display: none; }
-  }
-
-  @media (max-width: 520px) {
-    .share-btn span { display: none; }
-  }
-  /* ── Back to Top ──────────────────────────────────────── */
-  #back-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 1.5rem;
-    z-index: 200;
-    width: 44px; height: 44px;
-    background: #e35a00;
-    border: none;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    color: #ffffff;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(12px) scale(0.85);
-    transition: opacity .35s cubic-bezier(.4,0,.2,1),
-                visibility .35s,
-                transform .35s cubic-bezier(.34,1.56,.64,1),
-                background .2s;
-  }
-  #back-to-top:hover {
-    background: #c24e00;
-    transform: translateY(0) scale(1.08);
-  }
-  #back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-  }
-  [data-theme="dark"] #back-to-top {
-    background: rgba(255,255,255,0.12);
-    border: 1.5px solid rgba(255,255,255,0.25);
-    color: #fff;
-  }
-  [data-theme="dark"] #back-to-top:hover { background: rgba(255,255,255,0.22); }
-  /* ── Theme Toggle ─────────────────────────────────────── */
-  #theme-toggle {
-    position: fixed;
-    top: 1.2rem;
-    right: 1.5rem;
-    z-index: 200;
-    width: 40px; height: 40px;
-    background: #e35a00;
-    border: none;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    color: #ffffff;
-    font-size: 1.1rem;
-    transition: background .2s, transform .25s cubic-bezier(.34,1.56,.64,1);
-  }
-  #theme-toggle:hover { background: #c24e00; transform: scale(1.1) rotate(20deg); }
-  [data-theme="dark"] #theme-toggle {
-    background: rgba(255,255,255,0.12);
-    border: 1.5px solid rgba(255,255,255,0.22);
-    color: var(--text);
-  }
-  [data-theme="dark"] #theme-toggle:hover { background: rgba(255,255,255,0.22); }
-
-  /* ── Countdown Banner ─────────────────────────────────── */
-  #countdown-banner {
-    background: rgba(227,90,0,0.07);
-    border: 1px solid rgba(227,90,0,0.2);
-    border-radius: var(--radius);
-    padding: .85rem 1.1rem;
-    margin-bottom: 2rem;
-    display: flex; align-items: center; gap: .8rem;
-    animation: fadeUp .5s ease both;
-  }
-  [data-theme="dark"] #countdown-banner {
-    background: rgba(0,0,0,0.18);
-    border-color: rgba(255,255,255,0.15);
-  }
-  .countdown-icon { font-size: 1.4rem; flex-shrink: 0; }
-  .countdown-text { flex: 1; }
-  .countdown-text strong { display: block; font-size: .92rem; font-weight: 700; }
-  .countdown-text span { font-size: .78rem; color: var(--text-dim); }
-  .countdown-days {
-    font-family: var(--font-head);
-    font-size: 1.8rem;
-    font-weight: 800;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  .countdown-days small { display: block; font-size: .55rem; font-weight: 600; text-align: center; opacity: .7; letter-spacing: .05em; text-transform: uppercase; margin-top: .1rem; }
-
-  /* ── Discipline Links ─────────────────────────────────── */
-  .disc-classroom {
-    display: inline-flex; align-items: center; gap: .3rem;
-    margin-top: .4rem;
-    font-size: .68rem;
-    font-weight: 600;
-    color: #e35a00;
-    background: rgba(227,90,0,0.08);
-    border: 1px solid rgba(227,90,0,0.2);
-    padding: .2rem .55rem;
-    border-radius: 100px;
-    text-decoration: none;
-    transition: background .2s;
-  }
-  .disc-classroom:hover { background: rgba(227,90,0,0.16); }
-  .disc-classroom img { width: 13px; height: 13px; object-fit: contain; }
-  [data-theme="dark"] .disc-classroom {
-    color: inherit;
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.18);
-  }
-  [data-theme="dark"] .disc-classroom:hover { background: rgba(255,255,255,0.18); }
-  /* ── PWA Install Modal ────────────────────────────────── */
-  #pwa-modal .modal {
-    width: 320px;
-    text-align: left;
-    color: #1a1a1a;
-  }
-  #pwa-modal .modal h3 {
-    font-size: 1.1rem;
-    margin-bottom: .3rem;
-  }
-  #pwa-modal .modal .pwa-subtitle {
-    font-size: .8rem;
-    color: #666;
-    margin-bottom: 1.2rem;
-  }
-  .pwa-tabs {
-    display: flex;
-    gap: .4rem;
-    margin-bottom: 1rem;
-  }
-  .pwa-tab {
-    flex: 1;
-    padding: .45rem;
-    border-radius: 8px;
-    border: 1.5px solid #e0e0e0;
-    background: #f5f5f5;
-    font-family: var(--font-body);
-    font-size: .8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s, border-color .15s;
-    display: flex; align-items: center; justify-content: center; gap: .35rem;
-  }
-  .pwa-tab.active {
-    background: #e35a00;
-    border-color: #e35a00;
-    color: #fff;
-  }
-  .pwa-steps { display: none; }
-  .pwa-steps.active { display: flex; flex-direction: column; gap: .6rem; }
-  .pwa-step {
-    display: flex; gap: .7rem; align-items: flex-start;
-  }
-  .pwa-step-num {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: #e35a00;
-    color: #fff;
-    font-size: .7rem;
-    font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: .05rem;
-  }
-  .pwa-step-text { font-size: .82rem; line-height: 1.45; color: #333; }
-  .pwa-step-text strong { color: #111; }
-  .pwa-note {
-    margin-top: 1rem;
-    font-size: .72rem;
-    color: #888;
-    padding-top: .8rem;
-    border-top: 1px solid #eee;
-  }
-</style>
 </head>
+
 <body>
+  <!--
+    O <body> contém todo o conteúdo VISÍVEL da página.
+    Tudo que o usuário vê e com que interage fica aqui.
+  -->
 
-<!-- Loading Screen -->
-<div id="loading">
-  <div class="spinner"></div>
-  <p class="loading-text">Carregando...</p>
-</div>
-
-<!-- Theme Toggle -->
-<button id="theme-toggle" aria-label="Alternar tema">🌙</button>
-
-<!-- App -->
-<div id="app">
-  <div class="bg-rings">
-    <span></span><span></span><span></span>
+  <!-- ── Tela de Loading ────────────────────────────────────
+       Aparece enquanto as fontes e o JavaScript carregam.
+       O JavaScript remove a classe quando tudo está pronto,
+       fazendo esta tela desaparecer com transição suave.
+       id="loading" permite que o JS encontre este elemento.
+  ──────────────────────────────────────────────────────────── -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p class="loading-text">Carregando...</p>
   </div>
 
-  <div class="container">
+  <!-- ── Botão de Tema (🌙/☀️) ──────────────────────────────
+       Posicionado fixo no canto superior direito via CSS.
+       O JavaScript alterna entre modo claro e escuro ao clicar.
+       aria-label é lido por leitores de tela (acessibilidade).
+  ──────────────────────────────────────────────────────────── -->
+  <button id="theme-toggle" aria-label="Alternar tema">🌙</button>
 
-    <!-- Header -->
-    <header>
-      <div class="logo-wrap">
-        <img src="school_laranja.png" alt="CESAR School" />
-      </div>
-      <div class="header-info">
-        <h1 id="header-title">Linkhub <span>·</span> <span id="h-turma"></span></h1>
-        <p id="header-sem"></p>
-      </div>
-    </header>
+  <!-- ── App Principal ─────────────────────────────────────
+       Começa com opacity:0 (invisível via CSS).
+       O JavaScript adiciona a classe .visible após o carregamento,
+       fazendo o conteúdo aparecer com animação de fade.
+  ──────────────────────────────────────────────────────────── -->
+  <div id="app">
 
-    <!-- Share Bar -->
-    <div class="share-bar">
-      <button class="share-btn" onclick="copyLink()" aria-label="Copiar link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        <span>Copiar link</span>
-      </button>
-      <button class="share-btn" onclick="openQR()" aria-label="QR Code">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
-        <span>QR Code</span>
-      </button>
-      <button class="share-btn" onclick="openPWA()" aria-label="Instalar app">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V6M8 14l4 4 4-4"/><rect x="3" y="18" width="18" height="3" rx="1.5"/></svg>
-        <span>Instalar app</span>
-      </button>
-      <a id="wa-btn" class="share-btn" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.847L.057 23.117a.75.75 0 00.917.917l5.344-1.47A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.497-5.243-1.367l-.374-.216-3.876 1.067 1.07-3.791-.234-.387A9.959 9.959 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        <span>WhatsApp</span>
-      </a>
+    <!-- Anéis decorativos de fundo (círculos sutis) -->
+    <div class="bg-rings">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
 
-    <!-- Countdown -->
-    <div id="countdown-banner"></div>
+    <!-- Container central que limita a largura e centraliza o conteúdo -->
+    <div class="container">
 
-    <!-- Links Institucionais -->
-    <section>
-      <p class="section-label">Links Importantes</p>
-      <div class="links-grid" id="links-grid"></div>
-    </section>
-
-    <!-- Grade -->
-    <section>
-      <p class="section-label">Grade Semanal</p>
-      <div class="schedule-grid" id="schedule"></div>
-    </section>
-
-    <!-- Provas -->
-    <section>
-      <p class="section-label">Calendário de Provas</p>
-      <div class="provas-list" id="provas-list"></div>
-    </section>
-
-    <!-- Monitorias -->
-    <section>
-      <p class="section-label">Monitorias</p>
-      <div class="monitorias-list" id="monitorias-list"></div>
-    </section>
-
-    <footer>
-      <p>Feito por Thony Barreto, Vamos juntos! 🚀 · CESAR School</p>
-    </footer>
-  </div>
-</div>
-
-<!-- QR Modal -->
-<div class="modal-overlay" id="qr-modal" onclick="closeQR(event)">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="QR Code">
-    <h3>QR Code do Linkhub</h3>
-    <img id="qr-img" src="" alt="QR Code" />
-    <p class="qr-url" id="qr-url-text"></p>
-    <div class="modal-actions">
-      <button class="modal-btn primary" onclick="downloadQR()">⬇ Baixar .png</button>
-      <button class="modal-btn secondary" onclick="closeQR()">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<!-- PWA Install Modal -->
-<div class="modal-overlay" id="pwa-modal" onclick="closePWA(event)">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Instalar app">
-    <h3>📲 Instalar no celular</h3>
-    <p class="pwa-subtitle">Adicione o Linkhub à sua tela inicial como um app, sem precisar de loja.</p>
-
-    <div class="pwa-tabs">
-      <button class="pwa-tab active" onclick="switchTab('android')" id="tab-android">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341l1.442-2.498a.5.5 0 00-.866-.5l-1.461 2.531A8.96 8.96 0 0112 14a8.96 8.96 0 01-4.638 1.874L5.901 13.343a.5.5 0 00-.866.5l1.442 2.498A9.015 9.015 0 003 22h18a9.015 9.015 0 00-3.477-6.659zM8.5 20a1 1 0 110-2 1 1 0 010 2zm7 0a1 1 0 110-2 1 1 0 010 2zM8.392 7.143l-1.45-2.51a.5.5 0 10-.866.5l1.427 2.472A8.977 8.977 0 0112 7c1.573 0 3.05.404 4.497 1.105l1.427-2.472a.5.5 0 10-.866-.5l-1.45 2.51A8.985 8.985 0 0112 7a8.985 8.985 0 01-3.608.143z"/></svg>
-        Android
-      </button>
-      <button class="pwa-tab" onclick="switchTab('ios')" id="tab-ios">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        iPhone
-      </button>
-    </div>
-
-    <div class="pwa-steps active" id="steps-android">
-      <div class="pwa-step">
-        <div class="pwa-step-num">1</div>
-        <div class="pwa-step-text">Abra o site no <strong>Google Chrome</strong> do seu celular.</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">2</div>
-        <div class="pwa-step-text">Toque nos <strong>três pontinhos ⋮</strong> no canto superior direito.</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">3</div>
-        <div class="pwa-step-text">Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar app"</strong>.</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">4</div>
-        <div class="pwa-step-text">Confirme tocando em <strong>"Adicionar"</strong>. Pronto, o ícone aparece na sua tela! 🎉</div>
-      </div>
-    </div>
-
-    <div class="pwa-steps" id="steps-ios">
-      <div class="pwa-step">
-        <div class="pwa-step-num">1</div>
-        <div class="pwa-step-text">Abra o site no <strong>Safari</strong> do seu iPhone (não funciona em outros navegadores).</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">2</div>
-        <div class="pwa-step-text">Toque no botão de <strong>compartilhar</strong> — o ícone de quadrado com seta pra cima, na barra inferior.</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">3</div>
-        <div class="pwa-step-text">Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong>.</div>
-      </div>
-      <div class="pwa-step">
-        <div class="pwa-step-num">4</div>
-        <div class="pwa-step-text">Confirme tocando em <strong>"Adicionar"</strong> no canto superior direito. Feito! 🎉</div>
-      </div>
-    </div>
-
-    <p class="pwa-note">💡 O app funciona offline e fica sempre atualizado quando você abrir com internet.</p>
-
-    <div class="modal-actions" style="margin-top:1.2rem">
-      <button class="modal-btn secondary" onclick="closePWA()">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast"></div>
-
-<!-- Back to Top -->
-<button id="back-to-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-</button>
-
-<!-- Config (deve vir antes do script principal) -->
-<script src="config.js"></script>
-
-<script>
-/* ──────────────────────────────────────────────
-   Render
-────────────────────────────────────────────── */
-function init() {
-  // Header
-  document.getElementById("h-turma").textContent = CONFIG.turma;
-  document.getElementById("header-sem").textContent = "Semestre " + CONFIG.semestre + " · CESAR School";
-
-  // WhatsApp
-  document.getElementById("wa-btn").href = CONFIG.whatsappLink;
-
-  // Links
-  const grid = document.getElementById("links-grid");
-  CONFIG.links.forEach(l => {
-    const a = document.createElement("a");
-    a.href = l.url; a.target = "_blank"; a.rel = "noopener";
-    a.className = "link-card";
-    const isPdf = l.type === "pdf";
-    const right = isPdf
-      ? `<span class="link-badge">PDF</span>`
-      : `<svg class="link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-      const isTextIcon = l.icon.length <= 3 && !/\p{Emoji}/u.test(l.icon);
-      const iconHtml = isTextIcon
-        ? `<span class="link-icon"><span class="link-icon-text">${l.icon}</span></span>`
-        : `<span class="link-icon">${l.icon}</span>`;
-    a.innerHTML = `
-      ${iconHtml}
-      <span class="link-label">${l.label}</span>
-      ${right}
-    `;
-    grid.appendChild(a);
-  });
-
-  // Grade
-  const todayIdx = (new Date().getDay() + 6) % 7; // 0=Mon
-  const dias = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
-  const sched = document.getElementById("schedule");
-  CONFIG.grade.forEach((d, i) => {
-    const isToday = dias[todayIdx] === d.dia;
-    const isFriday = d.dia === "Sexta";
-    const card = document.createElement("div");
-    card.className = "day-card" + (isToday ? " today" : "") + (isFriday ? " friday" : "");
-    const aulasHtml = d.aulas.map(a => `
-      <div class="aula-item">
-        <div class="aula-horario">${a.horario}</div>
-        <div class="aula-disc">${a.disciplina}</div>
-        <div class="aula-sala">${a.sala}</div>
-        ${a.aviso ? `<div class="aula-aviso">⚠️ confira seu grupo</div>` : ""}
-      </div>
-    `).join("");
-    const fridayBadge = isFriday ? '<span class="friday-badge">🛋️ em casa</span>' : '';
-    card.innerHTML = `
-      <div class="day-name">${d.dia} ${isToday ? '<span class="today-badge">hoje</span>' : ''} ${fridayBadge}</div>
-      ${aulasHtml}
-    `;
-    sched.appendChild(card);
-  });
-
-  // helper: busca classroom de uma disciplina
-  const classroomUrl = (nome) => {
-    const d = (CONFIG.disciplinas || []).find(d => d.nome === nome);
-    return d && d.classroom ? d.classroom : "";
-  };
-
-  const classroomIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18V17l7 3.82L19 17v-3.82L12 17l-7-3.82z"/></svg>`;
-
-  // Provas — agrupadas por disciplina
-  const provasList = document.getElementById("provas-list");
-  const now = new Date(); now.setHours(0,0,0,0);
-  const monthNames = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
-  const sorted = [...CONFIG.provas].sort((a,b) => new Date(a.data) - new Date(b.data));
-
-  const provasByDisc = {};
-  sorted.forEach(p => {
-    if (!provasByDisc[p.disciplina]) provasByDisc[p.disciplina] = [];
-    provasByDisc[p.disciplina].push(p);
-  });
-
-  Object.entries(provasByDisc).forEach(([disc, provas]) => {
-    const group = document.createElement("div");
-    group.className = "materia-group";
-    const header = document.createElement("div");
-    header.className = "materia-header";
-    const cl = classroomUrl(disc);
-    header.innerHTML = `<span>${disc}</span>${cl ? `<a href="${cl}" target="_blank" rel="noopener" class="disc-classroom">${classroomIcon} Classroom</a>` : ""}`;
-    group.appendChild(header);
-    provas.forEach(p => {
-      const d = new Date(p.data + "T12:00:00");
-      const upcoming = d >= now;
-      const card = document.createElement("div");
-      card.className = "prova-card" + (upcoming ? " upcoming" : "");
-      card.innerHTML = `
-        <div class="prova-date">
-          <div class="day">${d.getDate().toString().padStart(2,"0")}</div>
-          <div class="month">${monthNames[d.getMonth()]}</div>
+      <!-- ── Cabeçalho ──────────────────────────────────────
+           Logo + título da turma + semestre.
+           Os textos são preenchidos pelo JavaScript a partir do config.js.
+      ──────────────────────────────────────────────────────── -->
+      <header>
+        <!-- Clique na logo recarrega a página (definido no script.js) -->
+        <div class="logo-wrap">
+          <img src="assets/images/school_laranja.png" alt="CESAR School" />
         </div>
-        <div class="prova-info">
-          <div class="disc">${p.disciplina}</div>
-          <div class="detail">${p.horario} · ${p.sala}</div>
+        <div class="header-info">
+          <!-- id="h-turma" e id="header-sem" são preenchidos pelo JS -->
+          <h1 id="header-title">Linkhub <span>·</span> <span id="h-turma"></span></h1>
+          <p id="header-sem"></p>
         </div>
-        <div class="prova-tipo">${p.tipo}</div>
-      `;
-      group.appendChild(card);
-    });
-    provasList.appendChild(group);
-  });
+      </header>
 
-  // Monitorias — agrupadas por disciplina
-  const monList = document.getElementById("monitorias-list");
+      <!-- ── Share Bar ─────────────────────────────────────
+           Barra de botões de compartilhamento.
+           onclick="funcao()" chama uma função JavaScript ao clicar.
+      ──────────────────────────────────────────────────────── -->
+      <div class="share-bar">
 
-  const monByDisc = {};
-  CONFIG.monitorias.forEach(m => {
-    if (!monByDisc[m.disciplina]) monByDisc[m.disciplina] = [];
-    monByDisc[m.disciplina].push(m);
-  });
+        <!-- Botão: copia o link do site -->
+        <button class="share-btn" onclick="copyLink()" aria-label="Copiar link">
+          <!-- SVG inline: ícone de copiar. viewBox define o sistema de coordenadas.
+               stroke="currentColor" usa a cor do texto definida no CSS. -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          <span>Copiar link</span>
+        </button>
 
-  Object.entries(monByDisc).forEach(([disc, mons]) => {
-    const group = document.createElement("div");
-    group.className = "materia-group";
-    const header = document.createElement("div");
-    header.className = "materia-header";
-    const cl = classroomUrl(disc);
-    header.innerHTML = `<span>${disc}</span>${cl ? `<a href="${cl}" target="_blank" rel="noopener" class="disc-classroom">${classroomIcon} Classroom</a>` : ""}`;
-    group.appendChild(header);
-    mons.forEach(m => {
-      const card = document.createElement("div");
-      card.className = "monitoria-card";
-      const isOnline = m.sala.toLowerCase().includes("online");
-      const isADefinir = m.horario === "A definir" || m.dia === "—";
-      const linkHtml = m.link
-        ? `<a href="${m.link}" target="_blank" rel="noopener" class="monitoria-link">Entrar</a>`
-        : isOnline && !isADefinir
-          ? `<span class="monitoria-link">🌐 Online</span>`
-          : isADefinir
-            ? `<span class="monitoria-link" style="opacity:.45;cursor:default;">A definir</span>`
-            : `<span class="monitoria-link" style="opacity:.5;cursor:default;">Presencial</span>`;
-      card.innerHTML = `
-        <div class="monitoria-dot"></div>
-        <div class="monitoria-info">
-          <div class="monitoria-disc">${m.dia !== "—" ? m.dia + " · " + m.horario : "Horário a definir"}</div>
-          <div class="monitoria-detail">${m.sala}</div>
+        <!-- Botão: abre modal com QR Code -->
+        <button class="share-btn" onclick="openQR()" aria-label="QR Code">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="3" height="3"/>
+            <rect x="18" y="14" width="3" height="3"/>
+            <rect x="14" y="18" width="3" height="3"/>
+            <rect x="18" y="18" width="3" height="3"/>
+          </svg>
+          <span>QR Code</span>
+        </button>
+
+        <!-- Botão: abre tutorial de instalação como app (PWA) -->
+        <button class="share-btn" onclick="openPWA()" aria-label="Instalar app">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 18V6M8 14l4 4 4-4"/>
+            <rect x="3" y="18" width="18" height="3" rx="1.5"/>
+          </svg>
+          <span>Instalar app</span>
+        </button>
+
+        <!-- Link direto para o grupo do WhatsApp.
+             id="wa-btn" permite que o JS defina o href com o link do config.js.
+             target="_blank" abre em nova aba. -->
+        <a id="wa-btn" class="share-btn" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.523 5.847L.057 23.117a.75.75 0 00.917.917l5.344-1.47A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.497-5.243-1.367l-.374-.216-3.876 1.067 1.07-3.791-.234-.387A9.959 9.959 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+          <span>WhatsApp</span>
+        </a>
+
+      </div><!-- fim .share-bar -->
+
+      <!-- ── Banner do Contador Regressivo ─────────────────
+           Preenchido dinamicamente pelo JavaScript (função initCountdown).
+           Mostra quantos dias faltam para a próxima prova.
+      ──────────────────────────────────────────────────────── -->
+      <div id="countdown-banner"></div>
+
+      <!-- ── Seção: Links Importantes ──────────────────────
+           O div#links-grid é preenchido pelo JavaScript a partir
+           de CONFIG.links no config.js.
+      ──────────────────────────────────────────────────────── -->
+      <section>
+        <p class="section-label">Links Importantes</p>
+        <div class="links-grid" id="links-grid"></div>
+      </section>
+
+      <!-- ── Seção: Grade Semanal ───────────────────────────
+           O div#schedule é preenchido pelo JavaScript a partir
+           de CONFIG.grade no config.js.
+      ──────────────────────────────────────────────────────── -->
+      <section>
+        <p class="section-label">Grade Semanal</p>
+        <div class="schedule-grid" id="schedule"></div>
+      </section>
+
+      <!-- ── Seção: Calendário de Provas ───────────────────
+           Preenchido pelo JS a partir de CONFIG.provas.
+           Agrupado por disciplina automaticamente.
+      ──────────────────────────────────────────────────────── -->
+      <section>
+        <p class="section-label">Calendário de Provas</p>
+        <div class="provas-list" id="provas-list"></div>
+      </section>
+
+      <!-- ── Seção: Monitorias ──────────────────────────────
+           Preenchido pelo JS a partir de CONFIG.monitorias.
+           Agrupado por disciplina automaticamente.
+      ──────────────────────────────────────────────────────── -->
+      <section>
+        <p class="section-label">Monitorias</p>
+        <div class="monitorias-list" id="monitorias-list"></div>
+      </section>
+
+      <footer>
+        <p>Feito por Thony Barreto, representante da Turma B de Ciência da Computação 2026.1, vamos juntos! 🚀 · CESAR School</p>
+        <div class="footer-links">
+          <a href="https://github.com/barretu" target="_blank" rel="noopener" aria-label="GitHub">
+            <!-- Ícone do GitHub -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/thony-barreto/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <!-- Ícone do LinkedIn -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </a>
         </div>
-        ${linkHtml}
-      `;
-      group.appendChild(card);
-    });
-    monList.appendChild(group);
-  });
-}
+      </footer>
 
-/* ──────────────────────────────────────────────
-   Share
-────────────────────────────────────────────── */
-function copyLink() {
-  const url = window.location.href;
-  navigator.clipboard.writeText(url).then(() => toast("Link copiado! 🔗")).catch(() => {
-    // fallback
-    const ta = document.createElement("textarea");
-    ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand("copy");
-    document.body.removeChild(ta); toast("Link copiado! 🔗");
-  });
-}
+    </div><!-- fim .container -->
+  </div><!-- fim #app -->
 
-function openPWA() { document.getElementById("pwa-modal").classList.add("open"); }
-function closePWA(e) {
-  if (!e || e.target === document.getElementById("pwa-modal"))
-    document.getElementById("pwa-modal").classList.remove("open");
-}
-function switchTab(os) {
-  document.getElementById("steps-android").classList.toggle("active", os === "android");
-  document.getElementById("steps-ios").classList.toggle("active", os === "ios");
-  document.getElementById("tab-android").classList.toggle("active", os === "android");
-  document.getElementById("tab-ios").classList.toggle("active", os === "ios");
-}
 
-function openQR() {
-  const url = encodeURIComponent(window.location.href);
-  const qrSrc = `https://quickchart.io/qr?text=${url}&size=200&margin=2&ecLevel=M`;
-  document.getElementById("qr-img").src = qrSrc;
-  document.getElementById("qr-url-text").textContent = decodeURIComponent(url);
-  document.getElementById("qr-modal").classList.add("open");
-}
-
-function closeQR(e) {
-  if (!e || e.target === document.getElementById("qr-modal")) {
-    document.getElementById("qr-modal").classList.remove("open");
-  }
-}
-
-async function downloadQR() {
-  const url = encodeURIComponent(window.location.href);
-  const qrSrc = `https://quickchart.io/qr?text=${url}&size=400&margin=2&ecLevel=M`;
-  try {
-    const res = await fetch(qrSrc);
-    const blob = await res.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "qrcode-linkhub-cesar.png";
-    a.click();
-    toast("QR Code baixado! 📥");
-  } catch {
-    toast("Abra a imagem e salve manualmente.");
-    window.open(qrSrc, "_blank");
-  }
-}
-
-/* ──────────────────────────────────────────────
-   Toast
-────────────────────────────────────────────── */
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
-}
-
-/* ──────────────────────────────────────────────
-   Boot
-────────────────────────────────────────────── */
-document.fonts.ready.then(() => {
-  init();
-  initCountdown();
-  setTimeout(() => {
-    document.getElementById("loading").classList.add("hidden");
-    document.getElementById("app").classList.add("visible");
-  }, 700);
-});
-
-// ESC fecha modal
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { closeQR(); closePWA(); }
-});
-
-// Back to top
-const btt = document.getElementById("back-to-top");
-window.addEventListener("scroll", () => {
-  btt.classList.toggle("visible", window.scrollY > 300);
-}, { passive: true });
-
-// Logo recarrega a página
-document.querySelector(".logo-wrap").style.cursor = "pointer";
-document.querySelector(".logo-wrap").addEventListener("click", () => location.reload());
-
-/* ──────────────────────────────────────────────
-   Dark Mode
-────────────────────────────────────────────── */
-const toggle = document.getElementById("theme-toggle");
-const saved = localStorage.getItem("theme");
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-let isDark = saved ? saved === "dark" : prefersDark;
-
-function applyTheme(dark) {
-  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-  toggle.textContent = dark ? "☀️" : "🌙";
-  localStorage.setItem("theme", dark ? "dark" : "light");
-}
-
-applyTheme(isDark);
-toggle.addEventListener("click", () => {
-  isDark = !isDark;
-  applyTheme(isDark);
-  // animação de rotação no clique
-  toggle.style.transform = "scale(1.2) rotate(360deg)";
-  setTimeout(() => toggle.style.transform = "", 350);
-});
-
-/* ──────────────────────────────────────────────
-   Countdown — próxima prova
-────────────────────────────────────────────── */
-function initCountdown() {
-  const banner = document.getElementById("countdown-banner");
-  const now = new Date(); now.setHours(0,0,0,0);
-  const upcoming = CONFIG.provas
-    .map(p => ({ ...p, date: new Date(p.data + "T12:00:00") }))
-    .filter(p => p.date >= now)
-    .sort((a, b) => a.date - b.date);
-
-  if (!upcoming.length) {
-    banner.style.display = "none";
-    return;
-  }
-
-  const next = upcoming[0];
-  const diff = Math.round((next.date - now) / (1000 * 60 * 60 * 24));
-  const emoji = diff === 0 ? "🚨" : diff <= 3 ? "😰" : diff <= 7 ? "📖" : "📅";
-  const label = diff === 0 ? "É hoje!" : diff === 1 ? "É amanhã!" : `faltam ${diff} dias`;
-
-  banner.innerHTML = `
-    <div class="countdown-icon">${emoji}</div>
-    <div class="countdown-text">
-      <strong>${next.disciplina} · ${next.tipo}</strong>
-      <span>${label} · ${next.horario} · ${next.sala}</span>
+  <!-- ── Modal: QR Code ────────────────────────────────────
+       Aparece quando o usuário clica em "QR Code" na share bar.
+       onclick="closeQR(event)" fecha ao clicar no fundo escuro.
+       role="dialog" e aria-modal="true" melhoram acessibilidade.
+  ──────────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="qr-modal" onclick="closeQR(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="QR Code">
+      <h3>QR Code do Linkhub</h3>
+      <!-- src é preenchido pelo JS com a URL da API QuickChart -->
+      <img id="qr-img" src="" alt="QR Code" />
+      <!-- URL do site exibida abaixo do QR Code -->
+      <p class="qr-url" id="qr-url-text"></p>
+      <div class="modal-actions">
+        <button class="modal-btn primary" onclick="downloadQR()">⬇ Baixar .png</button>
+        <button class="modal-btn secondary" onclick="closeQR()">Fechar</button>
+      </div>
     </div>
-    <div class="countdown-days">
-      ${diff === 0 ? "!" : diff}
-      <small>${diff === 0 ? "hoje" : "dias"}</small>
-    </div>
-  `;
-}
+  </div>
 
-/* ──────────────────────────────────────────────
-   PWA — Service Worker
-────────────────────────────────────────────── */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(() => {});
-}
-</script>
+  <!-- ── Modal: Tutorial de Instalação PWA ────────────────
+       Aparece quando o usuário clica em "Instalar app".
+       Contém instruções separadas para Android e iPhone.
+  ──────────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="pwa-modal" onclick="closePWA(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Instalar app">
+      <h3>📲 Instalar no celular</h3>
+      <p class="pwa-subtitle">Adicione o Linkhub à sua tela inicial como um app, sem precisar de loja.</p>
+
+      <!-- Abas para alternar entre Android e iPhone -->
+      <div class="pwa-tabs">
+        <button class="pwa-tab active" onclick="switchTab('android')" id="tab-android">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.523 15.341l1.442-2.498a.5.5 0 00-.866-.5l-1.461 2.531A8.96 8.96 0 0112 14a8.96 8.96 0 01-4.638 1.874L5.901 13.343a.5.5 0 00-.866.5l1.442 2.498A9.015 9.015 0 003 22h18a9.015 9.015 0 00-3.477-6.659zM8.5 20a1 1 0 110-2 1 1 0 010 2zm7 0a1 1 0 110-2 1 1 0 010 2zM8.392 7.143l-1.45-2.51a.5.5 0 10-.866.5l1.427 2.472A8.977 8.977 0 0112 7c1.573 0 3.05.404 4.497 1.105l1.427-2.472a.5.5 0 10-.866-.5l-1.45 2.51A8.985 8.985 0 0112 7a8.985 8.985 0 01-3.608.143z"/>
+          </svg>
+          Android
+        </button>
+        <button class="pwa-tab" onclick="switchTab('ios')" id="tab-ios">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          iPhone
+        </button>
+      </div>
+
+      <!-- Passos para Android (aba ativa por padrão) -->
+      <div class="pwa-steps active" id="steps-android">
+        <div class="pwa-step">
+          <div class="pwa-step-num">1</div>
+          <div class="pwa-step-text">Abra o site no <strong>Google Chrome</strong> do seu celular.</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">2</div>
+          <div class="pwa-step-text">Toque nos <strong>três pontinhos ⋮</strong> no canto superior direito.</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">3</div>
+          <div class="pwa-step-text">Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar app"</strong>.</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">4</div>
+          <div class="pwa-step-text">Confirme tocando em <strong>"Adicionar"</strong>. Pronto! 🎉</div>
+        </div>
+      </div>
+
+      <!-- Passos para iPhone (oculto por padrão) -->
+      <div class="pwa-steps" id="steps-ios">
+        <div class="pwa-step">
+          <div class="pwa-step-num">1</div>
+          <div class="pwa-step-text">Abra o site no <strong>Safari</strong> (não funciona em outros navegadores).</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">2</div>
+          <div class="pwa-step-text">Toque no botão de <strong>compartilhar</strong> — quadrado com seta pra cima, na barra inferior.</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">3</div>
+          <div class="pwa-step-text">Role e toque em <strong>"Adicionar à Tela de Início"</strong>.</div>
+        </div>
+        <div class="pwa-step">
+          <div class="pwa-step-num">4</div>
+          <div class="pwa-step-text">Confirme em <strong>"Adicionar"</strong> no canto superior direito. Feito! 🎉</div>
+        </div>
+      </div>
+
+      <p class="pwa-note">💡 O app funciona offline e fica sempre atualizado quando você abrir com internet.</p>
+
+      <div class="modal-actions" style="margin-top:1.2rem">
+        <button class="modal-btn secondary" onclick="closePWA()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast (notificação temporária) ────────────────────
+       Aparece brevemente na parte inferior da tela para confirmar
+       ações como "Link copiado". Controlado pelo script.js.
+  ──────────────────────────────────────────────────────────── -->
+  <div id="toast"></div>
+
+  <!-- ── Botão Voltar ao Topo ──────────────────────────────
+       Aparece quando o usuário scrolla mais de 300px.
+       O CSS e JS controlam a visibilidade.
+  ──────────────────────────────────────────────────────────── -->
+  <button id="back-to-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <!--
+    Os scripts ficam no FINAL do body por duas razões:
+    1. O HTML já foi carregado quando o JS roda — garantindo que
+       getElementById() e querySelector() encontrem os elementos.
+    2. A página aparece mais rápido (não precisa esperar o JS carregar).
+    
+    O config.js deve vir ANTES do script.js porque o script.js
+    usa a variável CONFIG que é definida no config.js.
+  -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>

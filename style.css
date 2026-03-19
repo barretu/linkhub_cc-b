@@ -1,0 +1,1058 @@
+/* ================================================================
+   LINKHUB CC-B · CESAR School — Folha de Estilos Principal
+   Arquivo: style.css
+   
+   O que é CSS?
+   CSS (Cascading Style Sheets) é a linguagem que define a aparência
+   visual do site. Enquanto o HTML define a ESTRUTURA (o que existe),
+   o CSS define o VISUAL (como as coisas aparecem).
+   
+   Como funciona a "cascata"?
+   As regras CSS são aplicadas em ordem — regras mais abaixo no
+   arquivo sobrescrevem as de cima quando conflitam. Por isso o
+   nome "cascata".
+   
+   Como o HTML carrega este arquivo?
+   No index.html existe esta linha no <head>:
+     <link rel="stylesheet" href="style.css">
+   Isso diz ao navegador: "antes de mostrar a página, leia este
+   arquivo de estilos".
+================================================================ */
+
+
+/* ================================================================
+   1. RESET GLOBAL
+   Por padrão, cada navegador (Chrome, Firefox, Safari) aplica seus
+   próprios estilos em elementos HTML — margens, paddings, tamanhos
+   de fonte diferentes. O reset remove esses estilos padrão para que
+   o visual seja igual em todos os navegadores.
+================================================================ */
+
+/* O seletor * significa "todos os elementos".
+   ::before e ::after são pseudo-elementos que aparecem antes/depois
+   do conteúdo de um elemento.
+   box-sizing: border-box faz com que padding e border sejam incluídos
+   no cálculo da largura/altura do elemento (mais intuitivo).
+   margin: 0 e padding: 0 removem espaçamentos padrão do navegador. */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* ================================================================
+   2. VARIÁVEIS CSS (DESIGN TOKENS)
+   CSS Variables (ou Custom Properties) são valores reutilizáveis
+   que você define uma vez e usa em qualquer lugar do CSS.
+   
+   Por que usar variáveis?
+   Imagine que você quer mudar a cor laranja do site. Sem variáveis,
+   você precisaria encontrar e alterar "#e35a00" em dezenas de lugares.
+   Com variáveis, você muda só em um lugar e o site todo atualiza.
+   
+   :root é o seletor do elemento raiz do documento (o <html>).
+   Definir variáveis no :root as torna acessíveis em todo o CSS.
+   Para usar uma variável: var(--nome-da-variavel)
+================================================================ */
+
+:root {
+  /* Cores de fundo — tema claro (branco com toques de laranja) */
+  --bg:        #ffffff;          /* fundo principal da página */
+  --bg-dark:   #fff5f0;          /* fundo levemente laranjado para variação */
+  --bg-deeper: #ffe8dc;          /* fundo ainda mais laranjado */
+
+  /* Cores dos cards e bordas */
+  --card:   rgba(227,90,0,0.06); /* fundo dos cards: laranja com 6% opacidade */
+  --card-b: rgba(227,90,0,0.2);  /* borda dos cards: laranja com 20% opacidade */
+
+  /* Cores dos botões */
+  --btn:   #f26b1d; /* laranja dos botões */
+  --btn-h: #e35a00; /* laranja mais escuro para hover dos botões */
+
+  /* Cores de texto */
+  --text:     #1a1a1a;           /* texto principal: quase preto */
+  --text-dim: rgba(0,0,0,0.45); /* texto secundário: preto com 45% opacidade */
+
+  /* Cor de destaque (laranja principal da marca) */
+  --accent: #e35a00;
+
+  /* Bordas arredondadas — usadas em cards, botões etc */
+  --radius:    14px; /* arredondamento padrão */
+  --radius-lg: 22px; /* arredondamento maior (modais) */
+
+  /* Fontes — definidas aqui para fácil troca */
+  --font-head: 'Bricolage Grotesque', sans-serif; /* títulos e destaques */
+  --font-body: 'Plus Jakarta Sans', sans-serif;   /* texto geral */
+
+  /* Sombra padrão dos elementos elevados */
+  --shadow: 0 8px 32px rgba(227,90,0,0.12);
+}
+
+/* ── Tema Escuro ──────────────────────────────────────────────
+   Quando o JavaScript adiciona data-theme="dark" no elemento <html>,
+   estas variáveis sobrescrevem as do :root acima.
+   É assim que o modo escuro funciona: mesmas variáveis, valores diferentes.
+   O atributo [data-theme="dark"] é um "seletor de atributo" — seleciona
+   qualquer elemento que tenha esse atributo com esse valor.
+────────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:        #1a0e00; /* fundo escuro com leve tom marrom/laranja */
+  --bg-dark:   #120a00;
+  --bg-deeper: #0d0600;
+  --card:      rgba(255,255,255,0.06);  /* cards sutis no escuro */
+  --card-b:    rgba(255,255,255,0.11);  /* bordas sutis no escuro */
+  --text:      #fff0e6;                 /* texto quase branco com tom quente */
+  --text-dim:  rgba(255,240,230,0.5);  /* texto secundário no escuro */
+  --accent:    #e35a00;                 /* laranja continua igual nos dois temas */
+}
+
+
+/* ================================================================
+   3. CONFIGURAÇÕES GLOBAIS DO DOCUMENTO
+================================================================ */
+
+/* scroll-behavior: smooth faz a página rolar suavemente quando
+   clicamos em links âncora (ex: #topo) em vez de pular diretamente */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body); /* fonte padrão de todo o texto */
+  background: var(--bg);         /* cor de fundo da página */
+  color: var(--text);            /* cor padrão do texto */
+  min-height: 100vh;             /* página ocupa pelo menos 100% da altura da tela */
+  overflow-x: hidden;            /* impede scroll horizontal indesejado */
+
+  /* transition anima a mudança de fundo e cor quando o tema muda.
+     .4s = duração de 0.4 segundos | ease = aceleração suave */
+  transition: background .4s ease, color .4s ease;
+}
+
+
+/* ================================================================
+   4. TELA DE LOADING (SPLASH SCREEN)
+   Aparece enquanto as fontes e o JavaScript carregam.
+   Evita o "flash" de conteúdo sem estilo.
+================================================================ */
+
+#loading {
+  position: fixed;       /* fica fixo na tela, independente do scroll */
+  inset: 0;              /* atalho para top:0; right:0; bottom:0; left:0 — cobre tela toda */
+  z-index: 9999;         /* fica na frente de absolutamente tudo (número alto) */
+  background: var(--bg);
+  display: flex;
+  flex-direction: column; /* empilha spinner e texto verticalmente */
+  align-items: center;    /* centraliza horizontalmente */
+  justify-content: center;/* centraliza verticalmente */
+  gap: 20px;              /* espaço entre spinner e texto */
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Quando o JS adiciona a classe .hidden, a tela de loading desaparece
+   com uma transição suave de opacidade */
+#loading.hidden {
+  opacity: 0;
+  visibility: hidden;  /* visibility:hidden remove o elemento da interação */
+  pointer-events: none;/* impede cliques mesmo antes de sumir completamente */
+}
+
+/* O spinner é um círculo que gira — criado só com CSS */
+.spinner {
+  width: 48px; height: 48px;
+  /* borda parcialmente transparente para criar o efeito de arco */
+  border: 4px solid rgba(255,255,255,0.25);
+  border-top-color: #fff; /* só o topo é sólido — cria o efeito de loading */
+  border-radius: 50%;     /* transforma o quadrado em círculo */
+  animation: spin 0.9s linear infinite; /* gira para sempre */
+}
+
+/* @keyframes define uma animação. "spin" é o nome que usamos acima.
+   "to" significa "estado final" — rotaciona 360 graus (uma volta completa) */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  letter-spacing: .08em; /* espaçamento entre letras */
+  opacity: .8;
+}
+
+
+/* ================================================================
+   5. ESTRUTURA DO APP
+   O #app começa invisível (opacity:0) e aparece com fade quando
+   o JavaScript adiciona a classe .visible após o carregamento.
+================================================================ */
+
+#app {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#app.visible { opacity: 1; }
+
+
+/* ================================================================
+   6. ANÉIS DECORATIVOS DE FUNDO
+   Três círculos grandes e sutis posicionados atrás do conteúdo.
+   São puramente decorativos — criam profundidade visual.
+================================================================ */
+
+.bg-rings {
+  position: fixed; /* ficam fixos enquanto a página scrolla */
+  inset: 0;
+  pointer-events: none; /* não interceptam cliques do usuário */
+  overflow: hidden;     /* esconde as partes dos círculos que saem da tela */
+  z-index: 0;           /* ficam atrás de todo o conteúdo (z-index: 1+) */
+}
+
+/* Todos os <span> dentro de .bg-rings são círculos */
+.bg-rings span {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(227,90,0,0.18); /* laranja muito sutil no tema claro */
+}
+
+/* No tema escuro, os círculos são brancos ainda mais sutis */
+[data-theme="dark"] .bg-rings span {
+  border-color: rgba(255,255,255,0.05);
+}
+
+/* Cada círculo tem tamanho e posição diferentes para criar camadas */
+.bg-rings span:nth-child(1) { width: 600px; height: 600px; top: -200px; right: -200px; }
+.bg-rings span:nth-child(2) { width: 900px; height: 900px; top: -300px; right: -380px; }
+.bg-rings span:nth-child(3) { width: 400px; height: 400px; bottom: -100px; left: -150px; }
+
+
+/* ================================================================
+   7. LAYOUT PRINCIPAL
+================================================================ */
+
+.container {
+  position: relative; /* necessário para z-index funcionar */
+  z-index: 1;         /* fica na frente dos anéis decorativos (z-index: 0) */
+  max-width: 1100px;  /* largura máxima — em telas maiores, centraliza */
+  margin: 0 auto;     /* centraliza o container na página */
+  padding: 2rem 1.5rem 4rem; /* espaçamento interno: topo, lados, base */
+}
+
+
+/* ================================================================
+   8. HEADER (CABEÇALHO)
+================================================================ */
+
+header {
+  display: flex;
+  flex-direction: column; /* logo e texto empilhados verticalmente */
+  align-items: center;    /* centralizados */
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem 0 2.5rem;
+  /* fadeUp é definida lá embaixo nas @keyframes */
+  animation: fadeUp .6s ease both;
+}
+
+/* Container da logo — retângulo arredondado */
+.logo-wrap {
+  width: 280px; height: 120px;
+  background: rgba(227,90,0,0.06);
+  border: 1.5px solid rgba(227,90,0,0.2);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;  /* garante que a imagem não vaze do container */
+  padding: 16px 28px;
+  cursor: pointer;   /* indica que é clicável (recarrega a página) */
+  transition: background .4s, border-color .4s;
+}
+[data-theme="dark"] .logo-wrap {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* A imagem dentro do container ocupa todo o espaço disponível */
+.logo-wrap img {
+  width: 100%; height: 100%;
+  object-fit: contain; /* mantém proporção sem distorcer */
+}
+
+/* Título principal — clamp() define tamanho fluido:
+   mínimo 1.5rem, preferido 4.5% da largura da viewport, máximo 2rem */
+.header-info h1 {
+  font-family: var(--font-head);
+  font-size: clamp(1.5rem, 4.5vw, 2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  color: #e35a00; /* laranja no tema claro */
+}
+[data-theme="dark"] .header-info h1 { color: var(--text); }
+
+/* O ponto " · " entre "Linkhub" e o nome da turma */
+.header-info h1 span { opacity: .6; font-weight: 700; }
+
+.header-info p {
+  margin-top: .4rem;
+  font-size: .9rem;
+  color: var(--text-dim);
+}
+
+
+/* ================================================================
+   9. SHARE BAR (BARRA DE COMPARTILHAMENTO)
+   Linha de botões: Copiar link, QR Code, Instalar app, WhatsApp
+================================================================ */
+
+.share-bar {
+  display: flex;
+  gap: .6rem;
+  justify-content: center; /* centraliza os botões */
+  flex-wrap: wrap;          /* quebra linha em telas pequenas */
+  margin-bottom: 2rem;
+  animation: fadeUp .6s .1s ease both; /* .1s = delay antes de animar */
+}
+
+/* Estilo base de todos os botões da share bar */
+.share-btn {
+  display: inline-flex; /* permite alinhar ícone e texto lado a lado */
+  align-items: center;
+  gap: .45rem;
+  background: #e35a00;      /* laranja sólido no tema claro */
+  border: 1px solid #e35a00;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: .5rem .95rem;
+  border-radius: 100px; /* border-radius muito alto = pílula */
+  cursor: pointer;
+  transition: background .2s, transform .15s, border-color .2s;
+  backdrop-filter: blur(6px); /* desfoque sutil do fundo */
+  text-decoration: none;      /* remove sublinhado dos links */
+}
+.share-btn:hover {
+  background: #c24e00;    /* laranja mais escuro no hover */
+  border-color: #c24e00;
+  transform: translateY(-2px); /* sobe 2px ao passar o mouse */
+}
+.share-btn:active { transform: translateY(0); } /* volta ao lugar ao clicar */
+.share-btn svg { flex-shrink: 0; } /* impede o ícone de encolher */
+
+/* No tema escuro, os botões ficam transparentes/sutis */
+[data-theme="dark"] .share-btn {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.18);
+  color: var(--text);
+}
+[data-theme="dark"] .share-btn:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.35);
+}
+
+
+/* ================================================================
+   10. MODAIS (QR CODE E TUTORIAL PWA)
+   Um modal é uma janela que aparece por cima do conteúdo principal.
+   É formado por dois elementos:
+   - .modal-overlay: o fundo escurecido
+   - .modal: a janela em si
+================================================================ */
+
+/* Fundo escurecido que cobre a página toda */
+.modal-overlay {
+  position: fixed; inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.55); /* preto semi-transparente */
+  backdrop-filter: blur(4px);   /* desfoca o conteúdo por trás */
+  display: flex; align-items: center; justify-content: center;
+  /* começa invisível */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+}
+/* Quando o JS adiciona .open, o modal aparece */
+.modal-overlay.open { opacity: 1; visibility: visible; }
+
+/* A janela do modal em si */
+.modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: 280px;
+  text-align: center;
+  color: #1a1a1a;
+  /* começa menor e cresce ao abrir — efeito de "pop" */
+  transform: scale(.9);
+  /* cubic-bezier cria uma curva de animação com "quique" no final */
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal { transform: scale(1); }
+
+.modal h3 {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #e35a00;
+}
+
+/* Imagem do QR Code */
+#qr-img {
+  width: 200px; height: 200px;
+  border-radius: 10px;
+  border: 2px solid #eee;
+  display: block;
+  margin: 0 auto 1rem; /* centraliza e adiciona margem abaixo */
+}
+
+/* URL exibida abaixo do QR Code */
+.qr-url {
+  font-size: .72rem;
+  color: #666;
+  word-break: break-all; /* quebra URLs longas em qualquer caractere */
+  margin-bottom: 1rem;
+}
+
+/* Container dos botões do modal */
+.modal-actions {
+  display: flex;
+  gap: .6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Botões dentro dos modais */
+.modal-btn {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: .5rem 1rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+}
+.modal-btn:hover { opacity: .85; transform: translateY(-1px); }
+.modal-btn.primary { background: #e35a00; color: #fff; }
+.modal-btn.secondary { background: #eee; color: #333; }
+
+
+/* ── Modal de Instalação PWA ─────────────────────────────── */
+
+#pwa-modal .modal { width: 320px; text-align: left; color: #1a1a1a; }
+#pwa-modal .modal h3 { font-size: 1.1rem; margin-bottom: .3rem; }
+#pwa-modal .modal .pwa-subtitle { font-size: .8rem; color: #666; margin-bottom: 1.2rem; }
+
+/* Abas Android / iPhone */
+.pwa-tabs { display: flex; gap: .4rem; margin-bottom: 1rem; }
+.pwa-tab {
+  flex: 1;
+  padding: .45rem;
+  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  background: #f5f5f5;
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  display: flex; align-items: center; justify-content: center; gap: .35rem;
+}
+/* Aba ativa fica laranja */
+.pwa-tab.active { background: #e35a00; border-color: #e35a00; color: #fff; }
+
+/* Conteúdo de cada aba — só aparece quando tem a classe .active */
+.pwa-steps { display: none; }
+.pwa-steps.active { display: flex; flex-direction: column; gap: .6rem; }
+
+/* Cada passo do tutorial */
+.pwa-step { display: flex; gap: .7rem; align-items: flex-start; }
+.pwa-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #e35a00;
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: .05rem;
+}
+.pwa-step-text { font-size: .82rem; line-height: 1.45; color: #333; }
+.pwa-step-text strong { color: #111; }
+.pwa-note { margin-top: 1rem; font-size: .72rem; color: #888; padding-top: .8rem; border-top: 1px solid #eee; }
+
+
+/* ================================================================
+   11. SEÇÕES
+   Cada bloco de conteúdo (Links, Grade, Provas, Monitorias) é
+   uma <section>. As animações têm delays progressivos para criar
+   efeito de entrada em cascata.
+================================================================ */
+
+section { margin-bottom: 2rem; animation: fadeUp .5s ease both; }
+section:nth-child(1) { animation-delay: .15s; } /* Links — aparece primeiro */
+section:nth-child(2) { animation-delay: .22s; } /* Grade */
+section:nth-child(3) { animation-delay: .29s; } /* Provas */
+section:nth-child(4) { animation-delay: .36s; } /* Monitorias */
+
+/* Título de cada seção — o "p" com classe .section-label */
+.section-label {
+  font-family: var(--font-head);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin-bottom: 1rem;
+  padding-left: 2px;
+  padding-bottom: .35rem;
+  border-bottom: 3px solid #e35a00; /* linha laranja embaixo do título */
+  display: inline-block; /* necessário para o border-bottom não ocupar a linha toda */
+}
+[data-theme="dark"] .section-label {
+  border-bottom-color: rgba(255,255,255,0.15); /* linha mais sutil no escuro */
+}
+
+
+/* ================================================================
+   12. CARDS DE LINKS IMPORTANTES
+================================================================ */
+
+/* Grid vertical dos cards — flex em coluna */
+.links-grid { display: flex; flex-direction: column; gap: .55rem; }
+
+/* Cada card é um link (<a>) estilizado como botão */
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  color: var(--text);
+  text-decoration: none; /* remove sublinhado padrão dos links */
+  transition: background .2s, transform .2s, border-color .2s;
+  backdrop-filter: blur(8px);
+}
+.link-card:hover {
+  background: rgba(227,90,0,0.1);
+  border-color: rgba(227,90,0,0.35);
+  transform: translateX(4px); /* desliza 4px para a direita ao passar o mouse */
+}
+[data-theme="dark"] .link-card:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.35);
+}
+
+/* Quadrado com o emoji/ícone do link */
+.link-icon {
+  font-size: 1.3rem;
+  width: 2.4rem; height: 2.4rem;
+  background: rgba(227,90,0,0.12);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; /* impede que o ícone encolha */
+}
+[data-theme="dark"] .link-icon { background: rgba(255,255,255,0.1); }
+
+/* Quando o ícone é texto (ex: "EA") em vez de emoji */
+.link-icon-text {
+  font-family: var(--font-head);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+/* Texto do link — flex:1 faz ele ocupar todo o espaço disponível */
+.link-label { font-weight: 600; font-size: .95rem; flex: 1; }
+
+/* Seta → nos links de URL */
+.link-arrow { opacity: .5; transition: opacity .2s, transform .2s; }
+.link-card:hover .link-arrow { opacity: 1; transform: translateX(3px); }
+
+/* Badge "PDF" nos links de documento */
+.link-badge {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: .18rem .45rem;
+  border-radius: 5px;
+  background: rgba(227,90,0,0.1);
+  border: 1px solid rgba(227,90,0,0.25);
+  color: #e35a00;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .link-badge {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.25);
+  color: inherit;
+}
+
+
+/* ================================================================
+   13. GRADE SEMANAL
+   Usa CSS Grid para criar 5 colunas (uma por dia da semana).
+   Em telas menores, o número de colunas diminui.
+================================================================ */
+
+/* CSS Grid divide o espaço em colunas iguais.
+   repeat(5, 1fr) = 5 colunas, cada uma com 1 fração do espaço disponível */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .65rem; /* espaço entre os cards */
+}
+
+/* Card de cada dia */
+.day-card {
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: .9rem .85rem;
+  backdrop-filter: blur(8px);
+}
+/* Destaque no dia atual */
+.day-card.today {
+  border-color: #e35a00;
+  background: rgba(227,90,0,0.07);
+}
+/* Sextas têm borda tracejada (aula online) */
+.day-card.friday {
+  border-style: dashed;
+  border-color: rgba(227,90,0,0.3);
+}
+[data-theme="dark"] .day-card.today { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); }
+[data-theme="dark"] .day-card.friday { border-color: rgba(255,255,255,0.2); }
+
+/* Nome do dia + badges */
+.day-name {
+  font-family: var(--font-head);
+  font-size: .82rem;
+  letter-spacing: .03em;
+  margin-bottom: .7rem;
+  display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+}
+
+/* Badge "hoje" no dia atual */
+.today-badge {
+  font-size: .58rem;
+  background: rgba(227,90,0,0.15);
+  color: #e35a00;
+  padding: .15rem .45rem;
+  border-radius: 100px;
+  letter-spacing: .05em;
+}
+/* Badge "🛋️ em casa" nas sextas */
+.friday-badge {
+  font-size: .58rem;
+  background: rgba(227,90,0,0.1);
+  color: #e35a00;
+  padding: .15rem .45rem;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+[data-theme="dark"] .today-badge { background: rgba(255,255,255,0.2); color: inherit; }
+[data-theme="dark"] .friday-badge { background: rgba(255,255,255,0.1); color: inherit; }
+
+/* Cada aula dentro do card */
+.aula-item { margin-bottom: .55rem; }
+.aula-item:last-child { margin-bottom: 0; } /* remove margem do último item */
+
+.aula-horario { font-size: .65rem; color: var(--text-dim); margin-bottom: .1rem; }
+.aula-disc    { font-size: .78rem; font-weight: 600; line-height: 1.3; }
+.aula-sala    { font-size: .65rem; color: var(--text-dim); }
+
+/* Badge de aviso para aulas de Projeto (sala varia por grupo) */
+.aula-aviso {
+  display: inline-block;
+  margin-top: .35rem;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  background: rgba(227,90,0,0.1);
+  border: 1px solid rgba(227,90,0,0.3);
+  color: #e35a00;
+  padding: .15rem .45rem;
+  border-radius: 5px;
+}
+[data-theme="dark"] .aula-aviso {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+  color: inherit;
+}
+
+
+/* ================================================================
+   14. CALENDÁRIO DE PROVAS
+================================================================ */
+
+/* Lista externa — espaço entre os grupos de disciplina */
+.provas-list { display: flex; flex-direction: column; gap: 2rem; }
+
+/* Cada grupo (disciplina + seus cards de prova) */
+.materia-group { display: flex; flex-direction: column; gap: .45rem; }
+
+/* Cabeçalho do grupo: nome da disciplina + botão do Classroom */
+.materia-header {
+  font-family: var(--font-head);
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: var(--text-dim);
+  padding: .5rem 0 .4rem 2px;
+  border-bottom: 1px solid var(--card-b);
+  margin-bottom: .2rem;
+  /* space-between joga o nome pro lado esquerdo e o botão pro direito */
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+}
+
+/* Card de cada prova — layout em 3 colunas: data | info | badge */
+.prova-card {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto; /* data fixa | info flexível | badge auto */
+  align-items: center;
+  gap: .8rem;
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: .85rem 1rem;
+  backdrop-filter: blur(8px);
+}
+/* Provas futuras têm borda laranja na esquerda */
+.prova-card.upcoming { border-left: 3px solid #e35a00; }
+[data-theme="dark"] .prova-card.upcoming { border-left-color: rgba(255,255,255,0.5); }
+
+/* Bloco da data (dia e mês) */
+.prova-date {
+  text-align: center;
+  background: rgba(227,90,0,0.1);
+  border-radius: 8px;
+  padding: .35rem .2rem;
+}
+[data-theme="dark"] .prova-date { background: rgba(255,255,255,0.1); }
+.prova-date .day   { font-family: var(--font-head); font-size: 1.25rem; font-weight: 800; line-height: 1; }
+.prova-date .month { font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; opacity: .7; }
+
+.prova-info .disc   { font-weight: 600; font-size: .88rem; }
+.prova-info .detail { font-size: .72rem; color: var(--text-dim); margin-top: .1rem; }
+
+/* Badge com o tipo da prova (AV1, Módulo 1 etc) */
+.prova-tipo {
+  font-family: var(--font-head);
+  font-size: .7rem;
+  background: rgba(227,90,0,0.1);
+  color: #e35a00;
+  padding: .25rem .55rem;
+  border-radius: 100px;
+  letter-spacing: .04em;
+  white-space: nowrap; /* impede quebra de linha */
+}
+[data-theme="dark"] .prova-tipo { background: rgba(255,255,255,0.12); color: inherit; }
+
+
+/* ================================================================
+   15. MONITORIAS
+================================================================ */
+
+.monitorias-list { display: flex; flex-direction: column; gap: 2rem; }
+
+/* Card de cada monitoria — layout em linha: ponto | info | badge */
+.monitoria-card {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--card);
+  border: 1px solid var(--card-b);
+  border-radius: var(--radius);
+  padding: .9rem 1rem;
+  backdrop-filter: blur(8px);
+}
+
+/* Bolinha laranja no lado esquerdo */
+.monitoria-dot {
+  width: 10px; height: 10px;
+  background: #e35a00;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .monitoria-dot { background: rgba(255,255,255,0.5); }
+
+.monitoria-info { flex: 1; }
+.monitoria-disc   { font-weight: 600; font-size: .88rem; }
+.monitoria-detail { font-size: .72rem; color: var(--text-dim); margin-top: .1rem; }
+
+/* Badge/botão no final de cada monitoria (Presencial, Online, Entrar) */
+.monitoria-link {
+  font-size: .75rem;
+  color: var(--text);
+  background: rgba(227,90,0,0.1);
+  border: 1px solid rgba(227,90,0,0.2);
+  padding: .3rem .65rem;
+  border-radius: 100px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background .2s;
+  white-space: nowrap;
+}
+.monitoria-link:hover { background: rgba(227,90,0,0.18); }
+[data-theme="dark"] .monitoria-link { background: rgba(255,255,255,0.1); border-color: transparent; }
+[data-theme="dark"] .monitoria-link:hover { background: rgba(255,255,255,0.18); }
+
+
+/* ================================================================
+   16. BOTÃO DO GOOGLE CLASSROOM
+   Aparece ao lado do nome de cada disciplina em Provas e Monitorias.
+   Só aparece quando o link está preenchido no config.js.
+================================================================ */
+
+.disc-classroom {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .68rem;
+  font-weight: 600;
+  color: #e35a00;
+  background: rgba(227,90,0,0.08);
+  border: 1px solid rgba(227,90,0,0.2);
+  padding: .2rem .55rem;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: background .2s;
+}
+.disc-classroom:hover { background: rgba(227,90,0,0.16); }
+.disc-classroom img { width: 13px; height: 13px; object-fit: contain; }
+[data-theme="dark"] .disc-classroom { color: inherit; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18); }
+[data-theme="dark"] .disc-classroom:hover { background: rgba(255,255,255,0.18); }
+
+
+/* ================================================================
+   17. RODAPÉ
+================================================================ */
+
+footer {
+  text-align: center;
+  font-size: .72rem;
+  color: var(--text-dim);
+  padding-top: 1rem;
+  animation: fadeUp .5s .5s ease both;
+}
+
+/* Links do GitHub e LinkedIn no rodapé */
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: .6rem;
+}
+.footer-links a {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color .2s, opacity .2s;
+  opacity: .7;
+}
+.footer-links a:hover { color: #e35a00; opacity: 1; }
+[data-theme="dark"] .footer-links a:hover { color: var(--text); opacity: 1; }
+
+
+/* ================================================================
+   18. TOAST (NOTIFICAÇÃO TEMPORÁRIA)
+   Mensagem que aparece brevemente na parte inferior da tela
+   para confirmar ações (ex: "Link copiado! 🔗")
+================================================================ */
+
+#toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  /* translateX(-50%) centraliza o elemento: como left:50% coloca a borda
+     esquerda no centro, precisamos mover o elemento 50% do seu tamanho
+     para a esquerda para centralizá-lo de verdade */
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20,20,20,0.9);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 500;
+  padding: .6rem 1.2rem;
+  border-radius: 100px;
+  opacity: 0; /* invisível por padrão */
+  transition: opacity .3s, transform .3s;
+  pointer-events: none; /* não bloqueia cliques */
+  z-index: 999;
+  white-space: nowrap;
+}
+/* Quando o JS adiciona .show, o toast aparece deslizando pra cima */
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* ================================================================
+   19. BOTÃO VOLTAR AO TOPO
+   Aparece quando o usuário scrolla mais de 300px.
+   O JS alterna a classe .visible via evento de scroll.
+================================================================ */
+
+#back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 1.5rem;
+  z-index: 200;
+  width: 44px; height: 44px;
+  background: #e35a00;
+  border: none;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  /* começa invisível e deslocado para baixo */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.85);
+  /* cubic-bezier(.34,1.56,.64,1) cria animação com "quique" (spring) */
+  transition: opacity .35s cubic-bezier(.4,0,.2,1),
+              visibility .35s,
+              transform .35s cubic-bezier(.34,1.56,.64,1),
+              background .2s;
+}
+#back-to-top:hover { background: #c24e00; transform: translateY(0) scale(1.08); }
+/* Quando visível: aparece com animação spring */
+#back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+[data-theme="dark"] #back-to-top {
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+}
+[data-theme="dark"] #back-to-top:hover { background: rgba(255,255,255,0.22); }
+
+
+/* ================================================================
+   20. BOTÃO DE ALTERNAR TEMA (🌙/☀️)
+   Posicionado fixo no canto superior direito.
+================================================================ */
+
+#theme-toggle {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.5rem;
+  z-index: 200;
+  width: 40px; height: 40px;
+  background: #e35a00;
+  border: none;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 1.1rem;
+  transition: background .2s, transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+#theme-toggle:hover { background: #c24e00; transform: scale(1.1) rotate(20deg); }
+[data-theme="dark"] #theme-toggle {
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.22);
+  color: var(--text);
+}
+[data-theme="dark"] #theme-toggle:hover { background: rgba(255,255,255,0.22); }
+
+
+/* ================================================================
+   21. BANNER CONTADOR REGRESSIVO
+   Aparece no topo do conteúdo mostrando quantos dias faltam
+   para a próxima prova. Preenchido dinamicamente pelo JavaScript.
+================================================================ */
+
+#countdown-banner {
+  background: rgba(227,90,0,0.07);
+  border: 1px solid rgba(227,90,0,0.2);
+  border-radius: var(--radius);
+  padding: .85rem 1.1rem;
+  margin-bottom: 2rem;
+  display: flex; align-items: center; gap: .8rem;
+  animation: fadeUp .5s ease both;
+}
+[data-theme="dark"] #countdown-banner {
+  background: rgba(0,0,0,0.18);
+  border-color: rgba(255,255,255,0.15);
+}
+.countdown-icon { font-size: 1.4rem; flex-shrink: 0; }
+.countdown-text { flex: 1; }
+.countdown-text strong { display: block; font-size: .92rem; font-weight: 700; }
+.countdown-text span   { font-size: .78rem; color: var(--text-dim); }
+.countdown-days {
+  font-family: var(--font-head);
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.countdown-days small {
+  display: block;
+  font-size: .55rem;
+  font-weight: 600;
+  text-align: center;
+  opacity: .7;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-top: .1rem;
+}
+
+
+/* ================================================================
+   22. ANIMAÇÕES
+================================================================ */
+
+/* fadeUp: elementos aparecem subindo levemente do fundo para cima.
+   Usada no header, share bar, seções e rodapé. */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px); /* começa 18px abaixo */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* termina na posição normal */
+  }
+}
+
+
+/* ================================================================
+   23. RESPONSIVIDADE
+   Media queries adaptam o layout para diferentes tamanhos de tela.
+   "min-width" = a partir de determinada largura
+   "max-width" = até determinada largura
+================================================================ */
+
+/* Desktop largo (≥ 900px): layouts em múltiplas colunas */
+@media (min-width: 900px) {
+  /* Links em 2 colunas */
+  .links-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+  /* Provas e monitorias em 2 colunas */
+  .provas-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .monitorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+}
+
+/* Tablet landscape (620px - 899px): grade em 3 colunas */
+@media (max-width: 899px) and (min-width: 620px) {
+  .schedule-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Tablet portrait (420px - 619px): grade em 2 colunas */
+@media (max-width: 619px) and (min-width: 420px) {
+  .schedule-grid { grid-template-columns: repeat(2, 1fr); }
+  .prova-card { grid-template-columns: 3rem 1fr auto; }
+}
+
+/* Mobile pequeno (≤ 419px): tudo em 1 coluna */
+@media (max-width: 419px) {
+  .schedule-grid { grid-template-columns: 1fr; }
+  .prova-card { grid-template-columns: 3rem 1fr auto; }
+  .share-btn span { display: none; } /* esconde o texto dos botões, mantém só ícone */
+}
+
+/* Mobile médio (≤ 520px): também esconde texto dos botões */
+@media (max-width: 520px) {
+  .share-btn span { display: none; }
+}

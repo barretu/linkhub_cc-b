@@ -1,6 +1,6 @@
 // ============================================================
 //  CESAR School · Linkhub da Turma — Configuração Central
-//  Edite aqui para atualizar todas as informações do hub
+//  Lugar para editar todas as informações de forma estruturada
 // ============================================================
 
 const CONFIG = {
@@ -26,13 +26,13 @@ const CONFIG = {
     },
     {
       label: "Manual do Estudante",
-      url: "Manual-do-Estudante-2026.1-CESAR-School.pdf",
+      url: "assets/pdfs/Manual-do-Estudante-2026.1-CESAR-School.pdf",
       icon: "📖",
       type: "pdf",
     },
     {
       label: "Calendário Acadêmico",
-      url: "Calendário Acadêmico 2026.1 Design e CC 231225_v2 (1).pdf",
+      url: "assets/pdfs/Calendário Acadêmico 2026.1 Design e CC 231225_v2 (1).pdf",
       icon: "📅",
       type: "pdf",
     }
