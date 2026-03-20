@@ -2,10 +2,21 @@
 
 Hub de informações centralizado para turmas universitárias. Criado originalmente para a turma de **Ciência da Computação — Turma B 2026.1** da CESAR School, mas feito para ser adaptado por qualquer turma ou curso.
 
-> Feito por **[Thony Barreto](https://github.com/barretu)** — Representante de sala · CC Turma B 2026.1 · CESAR School
-> [![GitHub](https://img.shields.io/badge/GitHub-barretu-181717?style=flat&logo=github)](https://github.com/barretu)
-> [![LinkedIn](https://img.shields.io/badge/LinkedIn-thony--barreto-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/thony-barreto/)
+Feito por **[Thony Barreto](https://github.com/barretu)** — Representante de sala · CC Turma B 2026.1 · CESAR School
+
+[![GitHub](https://img.shields.io/badge/GitHub-barretu-181717?style=flat&logo=github)](https://github.com/barretu)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-thony--barreto-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/thony-barreto/)
+[![License: MIT](https://img.shields.io/badge/Licença-MIT-e35a00?style=flat)](LICENSE)
+
 > Vamos juntos! 🚀
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+Em resumo: você pode usar, copiar, modificar e distribuir livremente — inclusive para fins comerciais — **desde que mantenha o crédito do autor original**.
 
 ---
 
@@ -39,7 +50,8 @@ linkhub/
 ├── script.js         → Comportamento e lógica (JavaScript)
 ├── config.js         → ⚙️ CONFIGURAÇÕES — edite aqui
 ├── manifest.json     → Configurações do app (PWA)
-└── sw.js             → Cache offline (Service Worker)
+├── sw.js             → Cache offline (Service Worker)
+└── LICENSE           → Licença MIT
 ```
 
 **Regra de ouro:** para atualizar qualquer informação do site — provas, monitorias, links, grade — você só precisa editar o `config.js`. Os outros arquivos raramente precisam ser tocados.
@@ -215,8 +227,6 @@ O app funciona offline após a primeira visita com internet.
 
 ---
 
----
-
 ## 📄 Explicação do manifest.json
 
 O `manifest.json` é um arquivo de configuração que transforma o site em um **PWA (Progressive Web App)** — ou seja, permite que ele seja instalado como um app no celular, sem precisar de loja.
@@ -295,7 +305,9 @@ Define como o ícone pode ser usado:
 
 **Para adaptar para sua turma**, mude `name`, `short_name`, `description` e o caminho do `src` do ícone. As cores devem combinar com o visual do seu site.
 
+---
 
+## 🤝 Contribuindo
 
 Encontrou um bug ou tem uma ideia de melhoria? Abra uma [issue](../../issues) ou mande um pull request!
 
@@ -315,11 +327,3 @@ git push origin minha-melhoria
 
 # 5. Abra um Pull Request no GitHub
 ```
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-Em resumo: você pode usar, copiar, modificar e distribuir livremente — inclusive para fins comerciais — desde que mantenha o crédito do autor original.
