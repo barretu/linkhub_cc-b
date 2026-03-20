@@ -65,14 +65,14 @@ const CONFIG = {
   // nota: aulas de Projeto variam por grupo (ter/qua/qui) — indicado com aviso
   grade: [
     {
-      dia: "Segunda",
+      dia: "Segunda-feira",
       aulas: [
         { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala 05 · Apolo" },
         { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala 05 · Apolo" },
       ],
     },
     {
-      dia: "Terça",
+      dia: "Terça-feira",
       aulas: [
         { horario: "08:15 – 10:15", disciplina: "Introdução à Computação", sala: "Sala 05 · Apolo" },
         { horario: "10:30 – 12:30", disciplina: "Fundamentos de Programação", sala: "Sala 05 · Apolo" },
@@ -80,7 +80,7 @@ const CONFIG = {
       ],
     },
     {
-      dia: "Quarta",
+      dia: "Quarta-feira",
       aulas: [
         { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala 05 · Apolo" },
         { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala 05 · Apolo" },
@@ -88,7 +88,7 @@ const CONFIG = {
       ],
     },
     {
-      dia: "Quinta",
+      dia: "Quinta-feira",
       aulas: [
         { horario: "08:15 – 10:15", disciplina: "Introdução à Computação", sala: "Sala 05 · Apolo" },
         { horario: "10:30 – 12:30", disciplina: "Fundamentos de Programação", sala: "Sala 05 · Apolo" },
@@ -96,7 +96,7 @@ const CONFIG = {
       ],
     },
     {
-      dia: "Sexta",
+      dia: "Sexta-feira",
       emoji: "🛋️",
       zoomLink: "https://cesar.zoom.us/j/82551008097",
       aulas: [
@@ -120,13 +120,13 @@ const CONFIG = {
   // ── Monitorias ───────────────────────────────────────────
   // Para múltiplos horários da mesma disciplina, use entradas separadas
   monitorias: [
-    { disciplina: "Matemática para Computação", dia: "Segunda", horario: "A definir", sala: "Sala 05 · Apolo", link: "" },
-    { disciplina: "Matemática para Computação", dia: "Quarta", horario: "A definir", sala: "Online", link: "" },
-    { disciplina: "Sistemas Digitais", dia: "Segunda", horario: "14:00", sala: "Online — horário a combinar", link: "" },
+    { disciplina: "Matemática para Computação", dia: "Segunda-feira", horario: "14:30", sala: "Sala 05 · Apolo", link: "" },
+    { disciplina: "Matemática para Computação", dia: "Sexta-feira", horario: "Horário a combinar", sala: "Online - Zoom", link: "" },
+    { disciplina: "Sistemas Digitais", dia: "Segunda-feira", horario: "14:00", sala: "Online — Zoom", link: "" },
     { disciplina: "Projeto 01", dia: "—", horario: "A definir", sala: "—", link: "" },
     { disciplina: "Introdução à Computação", dia: "—", horario: "A definir", sala: "—", link: "" },
-    { disciplina: "Fundamentos de Programação", dia: "Segunda", horario: "13:30", sala: "Sala 04 · Apolo", link: "" },
-    { disciplina: "Fundamentos de Programação", dia: "Terça", horario: "14:30", sala: "Sala 04 · Apolo", link: "" },
+    { disciplina: "Fundamentos de Programação", dia: "Segunda-feira", horario: "13:30", sala: "Sala 04 · Apolo", link: "" },
+    { disciplina: "Fundamentos de Programação", dia: "Terça-feira", horario: "14:30", sala: "Sala 04 · Apolo", link: "" },
   ],
 
 };
