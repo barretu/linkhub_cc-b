@@ -137,6 +137,16 @@ function init() {
       ? '<span class="friday-badge">🛋️ em casa</span>'
       : '';
 
+    // Botão do Zoom — só aparece na sexta e quando o link estiver preenchido no config.js
+    const zoomBtn = (isFriday && d.zoomLink)
+      ? `<a href="${d.zoomLink}" target="_blank" rel="noopener" class="zoom-btn">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+             <path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z"/>
+           </svg>
+           Entrar na aula
+         </a>`
+      : '';
+
     card.innerHTML = `
       <div class="day-name">
         ${d.dia}
@@ -144,6 +154,7 @@ function init() {
         ${fridayBadge}
       </div>
       ${aulasHtml}
+      ${zoomBtn}
     `;
 
     sched.appendChild(card);

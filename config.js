@@ -25,6 +25,18 @@ const CONFIG = {
       type: "link",
     },
     {
+      label: "Comunidade CESAR School",
+      url: "https://a.cesar.school/ConviteCC",
+      icon: "👥",
+      type: "link",
+    },
+    {
+      label: "Portal de Carreiras - Workalove",
+      url: "https://workability.worka.love/#/",
+      icon: "💼",
+      type: "link",
+    },
+    {
       label: "Manual do Estudante",
       url: "assets/pdfs/Manual-do-Estudante-2026.1-CESAR-School.pdf",
       icon: "📖",
@@ -86,6 +98,7 @@ const CONFIG = {
     {
       dia: "Sexta",
       emoji: "🛋️",
+      zoomLink: "https://cesar.zoom.us/j/82551008097",
       aulas: [
         { horario: "08:15 – 10:15", disciplina: "FP1: Gestão de Pessoas", sala: "Online 😴", online: true },
         { horario: "10:30 – 11:30", disciplina: "FP1: Gestão de Pessoas", sala: "Online 😴", online: true },
