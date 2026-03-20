@@ -546,9 +546,9 @@ function initCountdown() {
 
   // Emoji muda conforme a urgência
   const emoji = diff === 0 ? "🚨"        // é hoje!
-              : diff <= 3 ? "😰"         // até 3 dias
-              : diff <= 7 ? "📖"         // até 1 semana
-              : "📅";                     // mais de 1 semana
+              : diff <= 3 ? "😳"         // até 3 dias
+              : diff <= 7 ? "🤨"         // até 1 semana
+              : "👀";                     // mais de 1 semana
 
   const label = diff === 0 ? "É hoje!"
               : diff === 1 ? "É amanhã!"

@@ -120,8 +120,8 @@ const CONFIG = {
   // ── Monitorias ───────────────────────────────────────────
   // Para múltiplos horários da mesma disciplina, use entradas separadas
   monitorias: [
-    { disciplina: "Matemática para Computação", dia: "Segunda", horario: "15:00", sala: "Sala 05 · Apolo", link: "" },
-    { disciplina: "Matemática para Computação", dia: "Sexta", horario: "A combinar", sala: "Online", link: "" },
+    { disciplina: "Matemática para Computação", dia: "Segunda", horario: "A definir", sala: "Sala 05 · Apolo", link: "" },
+    { disciplina: "Matemática para Computação", dia: "Quarta", horario: "A definir", sala: "Online", link: "" },
     { disciplina: "Sistemas Digitais", dia: "Segunda", horario: "14:00", sala: "Online — horário a combinar", link: "" },
     { disciplina: "Projeto 01", dia: "—", horario: "A definir", sala: "—", link: "" },
     { disciplina: "Introdução à Computação", dia: "—", horario: "A definir", sala: "—", link: "" },
