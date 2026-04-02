@@ -110,7 +110,7 @@ const CONFIG = {
   // Datas extraídas da grade semanal (semana de 13–17/mar/2026)
   provas: [
     { data: "2026-04-13", disciplina: "Sistemas Digitais", tipo: "AV1 · 1ª Unidade", horario: "08:15", sala: "Sala 05 · Apolo" },
-    { data: "2026-04-14", disciplina: "Introdução à Computação", tipo: "AV1 · 1ª Unidade", horario: "08:15", sala: "Sala 05 · Apolo" },
+    { data: "2026-04-16", disciplina: "Introdução à Computação", tipo: "AV1 · 1ª Unidade", horario: "08:15", sala: "Sala 05 · Apolo" },
     { data: "2026-04-14", disciplina: "Fundamentos de Programação", tipo: "Módulo 1 · 1ª Unidade", horario: "10:30", sala: "Sala 05 · Apolo" },
     { data: "2026-04-15", disciplina: "Matemática para Computação", tipo: "AV1 · 1ª Unidade", horario: "08:15", sala: "Sala 05 · Apolo" },
     { data: "2026-04-17", disciplina: "FP1: Gestão de Pessoas", tipo: "AV1 · 1ª Unidade", horario: "08:15", sala: "Presencial" },
@@ -121,12 +121,12 @@ const CONFIG = {
   // Para múltiplos horários da mesma disciplina, use entradas separadas
   monitorias: [
     { disciplina: "Matemática para Computação", dia: "Segunda-feira", horario: "14:30", sala: "Sala 05 · Apolo", link: "" },
-    { disciplina: "Matemática para Computação", dia: "Sexta-feira", horario: "Horário a combinar", sala: "Online - Zoom", link: "" },
+    { disciplina: "Matemática para Computação", dia: "Sexta-feira", horario: "18:30", sala: "Online - Zoom", link: "" },
     { disciplina: "Sistemas Digitais", dia: "Segunda-feira", horario: "14:00", sala: "Online — Zoom", link: "" },
     { disciplina: "Projeto 01", dia: "—", horario: "A definir", sala: "—", link: "" },
     { disciplina: "Introdução à Computação", dia: "—", horario: "A definir", sala: "—", link: "" },
-    { disciplina: "Fundamentos de Programação", dia: "Segunda-feira", horario: "13:30", sala: "Sala 04 · Apolo", link: "" },
-    { disciplina: "Fundamentos de Programação", dia: "Terça-feira", horario: "14:30", sala: "Sala 04 · Apolo", link: "" },
+    { disciplina: "Fundamentos de Programação", dia: "Segunda-feira", horario: "13:30", sala: "Sala 04/05 · Apolo", link: "" },
+    { disciplina: "Fundamentos de Programação", dia: "Terça-feira", horario: "14:30", sala: "Sala 04/05 · Apolo", link: "" },
   ],
 
 };

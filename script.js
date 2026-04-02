@@ -107,12 +107,12 @@ function init() {
   // A fórmula (dia + 6) % 7 converte para 0=Segunda, 1=Terça... 6=Domingo
   // Isso facilita comparar com o nosso array que começa na Segunda
   const todayIdx = (new Date().getDay() + 6) % 7;
-  const dias = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+  const dias = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"];
   const sched = document.getElementById("schedule");
 
   CONFIG.grade.forEach(d => {
-    const isToday  = dias[todayIdx] === d.dia; // é o dia de hoje?
-    const isFriday = d.dia === "Sexta";        // é sexta (aulas online)?
+    const isToday  = dias[todayIdx] === d.dia;
+    const isFriday = d.dia === "Sexta-feira";
 
     const card = document.createElement("div");
     // Adiciona classes condicionalmente: "day-card today friday"
