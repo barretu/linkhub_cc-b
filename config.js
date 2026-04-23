@@ -67,8 +67,8 @@ const CONFIG = {
     {
       dia: "Segunda-feira",
       aulas: [
-        { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala 05 · Apolo" },
-        { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala 05 · Apolo" },
+        { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala A DEFINIR · Tiradentes" },
+        { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala Garagem 01 · Tiradentes" },
       ],
     },
     {
@@ -82,8 +82,8 @@ const CONFIG = {
     {
       dia: "Quarta-feira",
       aulas: [
-        { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala 05 · Apolo" },
-        { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala 05 · Apolo" },
+        { horario: "08:15 – 10:15", disciplina: "Matemática para Computação", sala: "Sala A DEFINIR · Tiradentes" },
+        { horario: "10:30 – 12:30", disciplina: "Sistemas Digitais", sala: "Sala Garagem 01 · Tiradentes" },
         { horario: "13:30 – 14:30", disciplina: "Projeto 01 ⚠️ ver grupo", sala: "A sala varia com o grupo · Apolo", aviso: true },
       ],
     },
